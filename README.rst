@@ -10,8 +10,8 @@ FastWeb Web Server
 
 .. code-block:: python
 
-    from fastweb.web import Api, Page
     from fastweb import Request
+    from fastweb.web import Api, Page
     from fastweb.web import coroutine, run_on_executor
 
     class Test(Api):
