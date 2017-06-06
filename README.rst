@@ -29,7 +29,6 @@ FastWeb Web Server
             ret = yield self.test_mysql.query('select * from entity_question limit 20;')
             print self.test_mysql.fetch()
 
-
             # RPC使用示例
             yield self.hello_service.sayHello()
 
