@@ -1,0 +1,10 @@
+*.pyc
+build/
+dist/
+fastweb.egg-info/
+*.log*
+*.swp
+*.un~
+.eggs/
+.idea/
+*.rdb

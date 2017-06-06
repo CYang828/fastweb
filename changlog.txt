@@ -1,0 +1,9 @@
+version 1.4.0:
+    update: fastweb.loader.load_manager -> fastweb.loader.load_component
+    fix: 修复mysql注入问题
+    fix: 修复异步重试机制
+    fix: 修复断开连接后的重新连接
+    fix: 修复query后需要commit操作
+    fix: 修复配置文件数字转换从float更改成int,解决数据库数字字符串问题
+    fix: mysql防注入修复
+    add: 增加handler级别线程池，处理阻塞操作
