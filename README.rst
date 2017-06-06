@@ -22,26 +22,25 @@ FastWeb Web Server
 
             # 加载handler级别线程池
             self.load_executor(5)
+            # handler级别线程池示例
+            r = yield self.test_executor()
+
+            # mysql使用示例
             ret = yield self.test_mysql.query('select * from entity_question limit 20;')
-            print '+++++' + str(ret)
-            #yield self.test_mysql.query('select * from user;')
             print self.test_mysql.fetch()
-            #for _ in xrange(30):
-            #   yield self.test_mysql.query('select * from user;')
 
-            #for _ in xrange(1):
-            #yield self.hello_service.sayHello()
 
-            #yield self.test_redis.call('set', 'name', 'jackson')
+            # RPC使用示例
+            yield self.hello_service.sayHello()
 
-            #yield self.hello_service.sayHello()
-            #ret = yield self.http_client.fetch('http://www.baidu.com')
+            # Redis使用示例
+            yield self.test_redis.call('set', 'name', 'jackson')
+
+            # Http请求示例
             request = Request(method='GET', url='http://www.baidu.com')
             ret = yield self.http_request(request)
 
-            r = yield self.test_executor()
-            print r
-
+            # response
             self.end('SUC', log=False, **{'name':0})
 
         # 在handler级别线程池中运行
