@@ -60,11 +60,11 @@ FastWeb Web Server
 Fastweb是一个快速构建web应用的框架，与Python的哲学相似，都是期望能够让使用者更快速的开发出满足需求的后端代码。
 关于为什么选择 ``Tornado`` ``Celery`` ``Thrift`` 作为Fastweb的工具集合中的重要成员，其实是有原因的。
 
-.. [ref]
+.. [Ref]
     Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed. By using non-blocking network I/O, Tornado can scale to tens of thousands of open connections, making it ideal for long polling, WebSockets, and other applications that require a long-lived connection to each user.
 
-.. [ref]
+.. [Ref]
     Celery is an asynchronous task queue/job queue based on distributed message passing.	It is focused on real-time operation, but supports scheduling as well.
 
-.. [ref]
+.. [Ref]
     The Apache Thrift software framework, for scalable cross-language services development, combines a software stack with a code generation engine to build services that work efficiently and seamlessly between multiple languages.
