@@ -20,6 +20,7 @@ FastWeb Web Server
         @checkArgument(name=str, sex=int)
         def get(self):
 
+            # 加载handler级别线程池
             self.load_executor(5)
             ret = yield self.test_mysql.query('select * from entity_question limit 20;')
             print '+++++' + str(ret)
@@ -43,6 +44,7 @@ FastWeb Web Server
 
             self.end('SUC', log=False, **{'name':0})
 
+        # 在handler级别线程池中运行
         @run_on_executor
         def test_executor(self):
             time.sleep(10)
@@ -52,6 +54,7 @@ FastWeb Web Server
 ----
 
 ``python setup install``
+
 ``pip install fastweb``
 
 迷思
