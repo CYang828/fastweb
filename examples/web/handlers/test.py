@@ -37,12 +37,11 @@ class Test(Api):
 
         r = yield self.test_executor()
         print r
-
         self.end('SUC', log=False, **{'name':0})
 
     @run_on_executor
     def test_executor(self):
-        time.sleep(10)
+        time.sleep(0.1)
         return 1000
 
 

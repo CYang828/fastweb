@@ -15,6 +15,8 @@ class CeleryTask(Task, SyncComponents):
     on_success方法为成功回调函数
     on_failure方法为异常回调函数
     on_retry方法为重试回调函数
+    broker
+    backend
     """
 
     def __init__(self, setting):

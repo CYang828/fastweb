@@ -169,7 +169,7 @@ class SyncMysql(Mysql):
             self._conn.ping()
             self.recorder('INFO', '{obj} ping successful'.format(obj=self))
         except pymysql.Error as e:
-            self.recorder('ERROR', '{obj} ping error [{msg}]'.format(obj=self, msg=e))
+            self.recorder('WARN', '{obj} ping error [{msg}]'.format(obj=self, msg=e))
             raise MysqlError
 
     def reconnect(self):
@@ -319,7 +319,7 @@ class AsynMysql(Mysql):
             yield self._conn.ping()
             self.recorder('WARN', '{obj} ping successful'.format(obj=self))
         except tornado_mysql.Error as e:
-            self.recorder('ERROR', '{obj} ping error [{msg}]'.format(obj=self, msg=e))
+            self.recorder('WARN', '{obj} ping error [{msg}]'.format(obj=self, msg=e))
             raise MysqlError
 
     @coroutine

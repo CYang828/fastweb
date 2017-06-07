@@ -7,3 +7,5 @@ version 1.4.0:
     fix: 修复配置文件数字转换从float更改成int,解决数据库数字字符串问题
     fix: mysql防注入修复
     add: 增加handler级别线程池，处理阻塞操作
+    fix: mysql.ping 使用reconnect参数，当连接没有断开时会报错(2003, "Can't connect to MySQL server on 'x.x.x.x' (fd x already registered)").
+         该错误并非一个致命错误，只是一个警告
