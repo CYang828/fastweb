@@ -1,4 +1,4 @@
-FastWeb Web Server
+Fastweb Web Server
 ==================
 
 依赖 ``Tornado`` ``Celery`` ``Thrift`` 开发的快速构建web应用的框架。
