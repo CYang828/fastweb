@@ -3,22 +3,25 @@
 """网络层模块"""
 
 import json
-import types
 import shlex
 import urllib
 import traceback
 import subprocess
-from concurrent.futures import ThreadPoolExecutor
 
-from fastweb.accesspoint import (web, coroutine, Task, Return, HTTPClient,
+
+from fastweb.accesspoint import (web, coroutine, Task, Return, options,
                                  AsyncHTTPClient, HTTPError, Subprocess, httpserver, ioloop, HTTPRequest, run_on_executor)
 
-from fastweb.loader import app
+
+import fastweb.coms
+from fastweb.util.tool import timing
+from fastweb.util.log import recorder
 from fastweb.util.thread import FThread
 from fastweb.util.python import to_plain
-from fastweb.util.tool import timing, uniqueid
-from fastweb.util.log import record, getLogger, recorder
-from fastweb.exception import ComponentError, HttpError, SubProcessError
+from fastweb.exception import HttpError, SubProcessError
+
+
+__all__ = ['Api', 'Page', 'Request', 'options', 'arguments', 'start_web_server']
 
 
 class Request(HTTPRequest):
@@ -60,153 +63,7 @@ class Request(HTTPRequest):
         return '<Request {method} {url} {body}>'.format(method=self.method, url=self.url, body=self.body)
 
 
-class Components(object):
-    """组件基类
-    基础组件功能
-    """
-
-    _blacklist = ['requestid', '_new_cookie', 'include_host',
-                  '_active_modules', '_current_user', '_locale']
-    executor = None
-
-    def __init__(self):
-        self.loader = app
-        self.errcode = app.errcode
-        self.configs = app.configs
-
-        # 组件缓冲池,确保同一请求对同一组件只获取一次
-        self._components = {}
-
-    def __getattr__(self, name):
-        """获取组件
-
-        :parameter:
-          - `name`:组件名称
-        """
-
-        if name in self._blacklist:
-            recorder('WARN', '{attr} in blacklist'.format(attr=name))
-            raise AttributeError
-
-        # 缓冲池中存在则使用缓冲池中的组件
-        component = self._components.get(name)
-
-        if not component:
-            component = app.component_manager.get_component(name, self)
-
-            if not component:
-                self.recorder('ERROR', "can't acquire idle component <{name}>".format(name=name))
-                raise ComponentError
-
-            self._components[name] = component
-            self.recorder('DEBUG', '{obj} get component from manager {name} {com}'.format(obj=self, name=name, com=component))
-            return component
-        else:
-            self.recorder('DEBUG', '{obj} get component from components cache {name} {com}'.format(obj=self, name=name, com=component))
-            return component
-
-    @staticmethod
-    def gen_requestid():
-        """生成requestid"""
-
-        return uniqueid()
-
-    def load_executor(self, size):
-        """加载当前handler级别的线程池"""
-
-        self.executor = ThreadPoolExecutor(size)
-
-    def add_blacklist(self, attr):
-        """增加类属性黑名单
-
-        :parameter:
-          - `attr`:属性名称
-        """
-
-        self._blacklist.append(attr)
-
-    def add_function(self, **kwargs):
-        """增加方法到对象中"""
-
-        # TODO:有没有更好的加载方式
-        for callname, func in kwargs.items():
-            setattr(self, '{callname}'.format(callname=callname), types.MethodType(func, self))
-
-    def recorder(self, level, msg):
-        """日志记录
-
-        :parameter:
-          - `level`:日志登记
-          - `msg`:记录信息
-        """
-
-        record(level, msg, getLogger('application_recorder'), extra={'requestid': self.requestid})
-
-    def release(self):
-        """释放组件"""
-
-        for name, component in self._components.items():
-            app.component_manager.return_component(name, component)
-            self.recorder('DEBUG', '{com} return manager'.format(com=component))
-
-        self._components.clear()
-        self.recorder('INFO', 'release all used components')
-
-
-class SyncComponents(Components):
-    """同步组件类"""
-
-    def http_request(self, request):
-        """http请求
-
-        :parameter:
-          - `request`:http请求
-        """
-
-        self.recorder('INFO', 'http request start {request}'.format(request=request))
-
-        with timing('ms', 10) as t:
-            try:
-                response = HTTPClient().fetch(request)
-            except HTTPError as ex:
-                self.recorder('ERROR', 'http request error {request} {e}'.format(request=request, e=ex))
-                raise HttpError
-
-        self.recorder('INFO', 'http request successful\n{response} -- {time}'.format(response=response.code, time=t))
-        return response
-
-    def call_subprocess(self, command, stdin_data=None):
-        """命令行调用
-
-        :parameter:
-          - `command`:命令行
-          - `stdin_data`:传入数据
-        """
-
-        self.recorder('INFO', 'call subprocess start\n<{cmd}>'.format(cmd=command))
-
-        with timing('ms', 10) as t:
-            sub_process = subprocess.Popen(shlex.split(command),
-                                           stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
-            try:
-                result, error = sub_process.communicate(stdin_data)
-            except (OSError, ValueError) as ex:
-                self.recorder('ERROR', 'call subprocess\n<{cmd}> ({e}) '.format(
-                    cmd=command, e=ex, msg=result.strip() if result else error.strip()))
-                raise SubProcessError
-
-        if sub_process.returncode != 0:
-            self.recorder('ERROR', 'call subprocess <{cmd}> <{time}> {msg}'.format(
-                cmd=command, time=t, msg=result.strip() if result else error.strip()))
-            raise SubProcessError
-
-        self.recorder('INFO', 'call subprocess successful\n<{cmd}> <{time} {msg}>'.format(
-            cmd=command, time=t, msg=result.strip() if result else error.strip()))
-        return result, error
-
-
-class AsynComponents(Components):
+class AsynComponents(fastweb.coms.Components):
     """异步组件类"""
 
     @coroutine
@@ -333,7 +190,7 @@ class Api(web.RequestHandler, AsynComponents):
     def end(self, code='SUC', log=True, **kwargs):
         """请求结束"""
 
-        ret = app.errcode[code]
+        ret = self.errcode[code]
         ret = dict(ret, **kwargs)
         self.write(json.dumps(ret))
         self.finish()
@@ -451,7 +308,7 @@ def arguments(convert=None, **ckargs):
     return _deco
 
 
-def start_server(port, handlers, **settings):
+def start_web_server(port, handlers, **settings):
     """启动服务器"""
 
     application = web.Application(
@@ -476,4 +333,3 @@ def set_error_handler():
     pass
 
 
-__all__ = [Api, Page, Request, arguments, start_server]

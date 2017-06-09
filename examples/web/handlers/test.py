@@ -3,9 +3,8 @@
 import time
 
 from fastweb.web import Api, Page
-from fastweb import Request
+from fastweb.web import Request
 from fastweb.web import coroutine, run_on_executor
-from urllib import urlencode, quote
 
 
 class Test(Api):
@@ -35,9 +34,13 @@ class Test(Api):
         request = Request(method='GET', url='http://www.baidu.com')
         ret = yield self.http_request(request)
 
+
         r = yield self.test_executor()
         print r
-        self.end('SUC', log=False, **{'name':0})
+
+        print 'call task'
+        print self.test_task.call_asyn(args=(101, 2))
+        self.end('SUC', log=False, **{'name': 0})
 
     @run_on_executor
     def test_executor(self):

@@ -12,8 +12,7 @@ Add handler and load super global variables here.
 
 import os
 
-from fastweb import options
-from fastweb.web import start_server
+from fastweb.web import options, start_web_server
 from fastweb.loader import app
 from fastweb.pattern import  SyncPattern, AsynPattern
 
@@ -26,7 +25,8 @@ if __name__ == '__main__':
     app.load_recorder('app.log', system_level='DEBUG')
     app.load_configuration(backend='ini', path=options.config)
     app.load_errcode()
-    app.load_component(pattern=AsynPattern)
+    app.load_component(pattern=AsynPattern, backend='ini', path=options.config)
+    app.load_component(pattern=AsynPattern, backend='ini', path='task.ini')
 
     from handlers.test import Test, ZohoOffice
 
@@ -38,4 +38,4 @@ if __name__ == '__main__':
     # template_path=os.path.join(os.path.dirname(__file__), "templates")
     # static_path=os.path.join(os.path.dirname(__file__), "static")
     # start_server(options.port, service_handlers, template_path=template_path, static_path=static_path, debug=True, xheaders=True)
-    start_server(options.port, handlers, debug=True, xheaders=False)
+    start_web_server(options.port, handlers, debug=True, xheaders=False)

@@ -1,4 +1,5 @@
 # coding:utf8
 
+import fastweb.task
 
-COMPONENTS = []
+COMPONENTS = [('task', fastweb.task.Task)]

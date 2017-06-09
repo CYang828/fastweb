@@ -100,7 +100,7 @@ class SyncConnectionPool(ConnectionPool):
                                                                                                     indent=4)))
         for _ in range(self._size):
             self.add_connection()
-        self.rescue(self._rescue)
+        self.rescue()
         recorder('DEBUG', 'synchronize connection pool create successful <{name}>'.format(name=self._name))
 
     def rescue(self):

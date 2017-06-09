@@ -1,6 +1,6 @@
 # coding:utf8
 
-"""第三方接入模块"""
+"""第三方模块接入点"""
 
 
 import tornado
@@ -14,9 +14,9 @@ from tornado import gen, web, httpserver, ioloop
 from tornado.gen import coroutine, Return, Task, sleep
 from tornado.httpclient import HTTPClient, AsyncHTTPClient, HTTPError, HTTPRequest
 
-
+from kombu import Queue, Exchange
 from celery.exceptions import Ignore
-from celery import Task, platforms, Celery, task
+from celery import Task as CeleryTask, platforms, Celery, task
 
 from thrift.server import TServer
 from thrift.transport import TSocket

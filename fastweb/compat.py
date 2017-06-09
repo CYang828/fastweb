@@ -1,5 +1,6 @@
 # coding:utf8
 
+"""兼容模块"""
 
 import sys
 

@@ -33,6 +33,7 @@ def get_yaml_logging_setting(path=DEFAULT_YAML_LOGGING_PATH, env_key=DEFAULT_YAM
       - `path`:yaml文件路径
       - `env_key`:yaml配置环境变量,默认为YAML_LOG_CFG"""
 
+    setting = None
     value = os.getenv(env_key, None)
     path = value if value else path
 

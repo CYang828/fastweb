@@ -6,6 +6,7 @@ import collections
 import ConfigParser
 
 from fastweb.util.log import recorder
+from fastweb.util.python import to_iter
 from fastweb.exception import ParameterError
 
 
@@ -106,23 +107,26 @@ class Configuration(object):
         else:
             raise ParameterError
 
-    def get_components(self, component):
+    def get_components(self, components):
         """根据组件名称获取组件配置
 
         :parameter:
-          - `component`:组件名称
+          - `components`:组件名称
 
         :return:
-          {section: {'object': component_name, 'object': component_type}}
+          {section: {'component': component_name, 'object': component_type}}
         """
 
-        components = {}
-        component_exp = r'(%s):(\w*)' % component
-        exp = re.compile(component_exp)
+        match_components = {}
+        components = to_iter(components)
 
-        for section in self.configs.keys():
-            match = exp.match(section)
-            if match:
-                components[section] = {'component': match.group(1), 'object': match.group(2)}
+        for component in components:
+            component_exp = r'(%s):(\w*)' % component
+            exp = re.compile(component_exp)
 
-        return components
+            for section in self.configs.keys():
+                match = exp.match(section)
+                if match:
+                    match_components[section] = {'component': match.group(1), 'object': match.group(2)}
+
+        return match_components
