@@ -6,7 +6,7 @@ Fastweb Web Server
 示例
 ----
 
-下面是一个简单的例子:
+下面是一个例子:
 
 .. code-block:: python
 

@@ -39,7 +39,9 @@ class Test(Api):
         print r
 
         print 'call task'
-        print self.test_task.call_asyn(args=(101, 2))
+        yield self.test_task.call_async(args=(101, 2))
+        x = yield self.test_task.call(args=(101, 2))
+        print 'calculate: {}'.format(x)
         self.end('SUC', log=False, **{'name': 0})
 
     @run_on_executor
