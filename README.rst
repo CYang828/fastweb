@@ -8,13 +8,16 @@ Web层示例
 
 .. code-block:: ini
 
-    ;组件配置文件(component.ini)
+    ; 组件配置文件(component.ini)
+
+    ;thrift rpc 组件配置
     [tftrpc:hello_service]
     host = localhost
     port = 8888
     thrift_module = gen-py-tornado.HelloService.HelloService
     size = 10
 
+    ; mysql组件配置
     [mysql:test_mysql]
     host = localhost
     port = 3306
@@ -26,15 +29,28 @@ Web层示例
     size=5
     awake = 300
 
+    ; mongo组件配置
     [mongo:test_mongo]
     host = localhost
     port = 27017
     timeout = 10
 
+    ; redis组件配置
     [redis:test_redis]
     host = localhost
     port = 6379
     db = 1
+
+    ; task组件配置
+    [task:test_task]
+    name = test_task
+    broker = amqp://guest:guest@localhost:5672//
+    backend = redis://localhost/0
+    amqp://guest:guest@localhost:5672//
+    task_class = some_tasks.add.Add
+    queue = test_task_queue
+    exchange = test_task_exchange
+    routing_key = test_task_routing_key
 
 .. code-block:: python
 
@@ -68,6 +84,10 @@ Web层示例
             # Http请求示例
             request = Request(method='GET', url='http://www.baidu.com')
             ret = yield self.http_request(request)
+
+            # 任务调用示例
+            yield self.test_task.call_async(args=(101, 2))
+            x = yield self.test_task.call(args=(101, 2))
 
             # response
             self.end('SUC', log=False, **{'name':0})
@@ -106,6 +126,8 @@ Task层示例
 .. code-block:: ini
 
     ;task配置文件(task.ini)
+
+    ;task组件配置
     [task:test_task]
     name = test_task
     broker = amqp://guest:guest@localhost:5672//
