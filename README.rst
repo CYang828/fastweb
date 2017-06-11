@@ -1,5 +1,5 @@
-Fastweb Web Server
-==================
+Fastweb Web Server - 高速迭代.快速试错
+====================================
 
 依赖 ``Tornado`` ``Celery`` ``Thrift`` 开发的快速构建web应用的框架。
 
@@ -8,7 +8,7 @@ Web层示例
 
 .. code-block:: ini
 
-    ; 组件配置文件(component.ini)
+    ;组件配置文件(component.ini)
 
     ;thrift rpc 组件配置
     [tftrpc:hello_service]
@@ -17,7 +17,7 @@ Web层示例
     thrift_module = gen-py-tornado.HelloService.HelloService
     size = 10
 
-    ; mysql组件配置
+    ;mysql组件配置
     [mysql:test_mysql]
     host = localhost
     port = 3306
@@ -29,24 +29,23 @@ Web层示例
     size=5
     awake = 300
 
-    ; mongo组件配置
+    ;mongo组件配置
     [mongo:test_mongo]
     host = localhost
     port = 27017
     timeout = 10
 
-    ; redis组件配置
+    ;redis组件配置
     [redis:test_redis]
     host = localhost
     port = 6379
     db = 1
 
-    ; task组件配置
+    ;task组件配置
     [task:test_task]
     name = test_task
     broker = amqp://guest:guest@localhost:5672//
     backend = redis://localhost/0
-    amqp://guest:guest@localhost:5672//
     task_class = some_tasks.add.Add
     queue = test_task_queue
     exchange = test_task_exchange
@@ -150,9 +149,10 @@ Task层示例
         app.load_component(pattern=AsynPattern, backend='ini', path='task.ini')
         start_task_worker()
 
-
 Service层示例
 ------------
+
+请参考examples中示例。
         
 安装
 ----
@@ -161,20 +161,12 @@ Service层示例
 
 ``pip install fastweb``
 
-迷思
+适用场景
+-------
+
+Fastweb是一个快速构建web应用的框架，与Python的哲学相同，都是期望能够让使用者更快速的开发出满足需求的后端代码。
+高速迭代，快速试错，这是使用Fastweb最大的效益！
+
+抉择
 ----
-
-Fastweb是一个快速构建web应用的框架，与Python的哲学相似，都是期望能够让使用者更快速的开发出满足需求的后端代码。
-关于为什么选择 ``Tornado`` ``Celery`` ``Thrift`` 作为Fastweb的工具集合中的重要成员，其实是有原因的。
-
-:: 
-
-    Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed. By using non-blocking network I/O, Tornado can scale to tens of thousands of open connections, making it ideal for long polling, WebSockets, and other applications that require a long-lived connection to each user.
-
-::
-
-    Celery is an asynchronous task queue/job queue based on distributed message passing.	It is focused on real-time operation, but supports scheduling as well.
-
-::
-
-    The Apache Thrift software framework, for scalable cross-language services development, combines a software stack with a code generation engine to build services that work efficiently and seamlessly between multiple languages.
+关于为什么选择 ``Tornado`` ``Celery`` ``Thrift`` 作为Fastweb的工具集合中的重要成员。

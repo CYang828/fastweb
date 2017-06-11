@@ -1,6 +1,6 @@
 pyyaml
-thrift==0.10.0
-tornado==4.4.2
+thrift
+tornado
 requests
 redis
 hiredis
@@ -15,5 +15,4 @@ celery
 tornadis
 motor
 kombu==4.0.2
-tornado-celery
 autopep8

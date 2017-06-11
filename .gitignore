@@ -8,3 +8,4 @@ fastweb.egg-info/
 .eggs/
 .idea/
 *.rdb
+docs/_build
