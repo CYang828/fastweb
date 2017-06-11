@@ -3,10 +3,8 @@ Fastweb Web Server
 
 依赖 ``Tornado`` ``Celery`` ``Thrift`` 开发的快速构建web应用的框架。
 
-示例
-----
-
-下面是一个例子:
+web层示例
+--------
 
 .. code-block:: python
 
@@ -26,7 +24,7 @@ Fastweb Web Server
             r = yield self.test_executor()
 
             # mysql使用示例
-            ret = yield self.test_mysql.query('select * from entity_question limit 20;')
+            ret = yield self.test_mysql.query('select * from table limit 20;')
             print self.test_mysql.fetch()
 
             # RPC使用示例
@@ -47,6 +45,38 @@ Fastweb Web Server
         def test_executor(self):
             time.sleep(10)
             return 1000
+
+
+task层示例
+---------
+
+.. code-block:: ini
+
+    [task:test_task]
+    name = test_task
+    broker = amqp://guest:guest@localhost:5672//
+    backend = redis://localhost/0
+    task_class = some_tasks.add.Add
+    queue = test_task_queue
+    exchange = test_task_exchange
+    routing_key = test_task_routing_key
+
+.. code-block:: python
+
+    class Add(object):
+        """任务"""
+
+        def run(self, x, y):
+            return x+y
+
+    if __name__ == '__main__':
+        app.load_recorder('task.log', system_level='DEBUG')
+        app.load_component(pattern=AsynPattern, backend='ini', path='task.ini')
+        start_task_worker()
+
+
+service层示例
+------------
         
 安装
 ----
