@@ -16,11 +16,11 @@ Web层示例
     size = 10
 
     [mysql:test_mysql]
-    host = 10.60.0.36
+    host = localhost
     port = 3306
-    user = admin
-    password = qq9527@xdf
-    db = neworiental
+    user = username
+    password = password
+    db = db_name
     timeout = 5
     charset=utf8
     size=5
