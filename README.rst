@@ -3,10 +3,42 @@ Fastweb Web Server
 
 依赖 ``Tornado`` ``Celery`` ``Thrift`` 开发的快速构建web应用的框架。
 
-web层示例
+Web层示例
 --------
 
+.. code-block:: ini
+
+    ;组件配置文件(component.ini)
+    [tftrpc:hello_service]
+    host = localhost
+    port = 8888
+    thrift_module = gen-py-tornado.HelloService.HelloService
+    size = 10
+
+    [mysql:test_mysql]
+    host = 10.60.0.36
+    port = 3306
+    user = admin
+    password = qq9527@xdf
+    db = neworiental
+    timeout = 5
+    charset=utf8
+    size=5
+    awake = 300
+
+    [mongo:test_mongo]
+    host = localhost
+    port = 27017
+    timeout = 10
+
+    [redis:test_redis]
+    host = localhost
+    port = 6379
+    db = 1
+
 .. code-block:: python
+
+    """handler（handler.test）"""
 
     from fastweb import Request
     from fastweb.web import Api, Page
@@ -46,12 +78,34 @@ web层示例
             time.sleep(10)
             return 1000
 
+    """服务加载组件和启动"""
 
-task层示例
+    from fastweb.web import start_web_server
+    from fastweb.loader import app
+    from fastweb.pattern import  SyncPattern, AsynPattern
+
+    if __name__ == '__main__':
+
+        options.parse_command_line()
+        app.load_recorder('app.log', system_level='DEBUG')
+        app.load_configuration(backend='ini', path='component.ini')
+        app.load_errcode()
+        app.load_component(pattern=AsynPattern, backend='ini', path=options.config)
+        app.load_component(pattern=AsynPattern, backend='ini', path='task.ini')
+
+        from handler.test import Test
+
+        handlers = [(r'/test', Test)]
+
+        start_web_server(6666, handlers, debug=True, xheaders=False)
+
+
+Task层示例
 ---------
 
 .. code-block:: ini
 
+    ;task配置文件(task.ini)
     [task:test_task]
     name = test_task
     broker = amqp://guest:guest@localhost:5672//
@@ -75,7 +129,7 @@ task层示例
         start_task_worker()
 
 
-service层示例
+Service层示例
 ------------
         
 安装
