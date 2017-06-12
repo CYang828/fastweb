@@ -10,18 +10,20 @@ class FThread(Thread):
 
     _fthreads = []
 
-    def __init__(self, name, task, period=0):
+    def __init__(self, name, task, period=0, frequency=-1):
         """初始化线程
 
         :parameter:
          - `name`: 线程名
          - `task`: 任务函数,线程名会作为参数传递给task
-         - `period`: 时间周期
+         - `period`: 执行时间间隔
+         - `count`： 执行次数，-1为永远执行，默认为永远执行
         """
 
         self._event = Event()
         self._period = period
         self._task = task
+        self._frequency = frequency
         self._fthreads.append(self)
         super(FThread, self).__init__(name=name)
 
@@ -31,9 +33,10 @@ class FThread(Thread):
     def run(self):
         """运行函数,可以通过start开始线程,该函数会被自动调用"""
 
-        while not self._event.isSet():
+        while not self._event.isSet() and self._frequency:
             self._event.wait(self._period)
             self._task(self)
+            self._frequency -= 1
 
     def join(self, timeout=0):
         """结束当前线程"""

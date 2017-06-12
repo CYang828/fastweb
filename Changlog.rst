@@ -17,3 +17,7 @@ version 1.4.1:
             以上两条是为了配置文件的分离，使它们在物理上就是隔离的，防止混淆
     update: fastweb.web.start_server -> fastweb.web.start_web_server
     add: 增加依赖celery的任务系统，包括worker的运行和通过web层调用任务，具体参看fastweb.task和examples.task
+
+
+version 1.4.1.1
+    fix: 修复同步调用系统命令函数，原采用subprocess调用系统命令，每次都需要创建子进程，面对大并发情况，性能较差
