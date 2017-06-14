@@ -2,11 +2,10 @@
 
 """脚本层模块"""
 
-from fastweb.web import SyncComponents
+from fastweb.components import SyncComponents
 
 
 class Script(SyncComponents):
     """脚本操作基类"""
 
-    # TODO:脚本类
     pass

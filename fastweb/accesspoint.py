@@ -26,3 +26,5 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
 from subprocess32 import Popen
+
+from docopt import docopt

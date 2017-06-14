@@ -25,7 +25,7 @@ setup(
     scripts=[],
     entry_points={
         'console_scripts': [
-            'fastservice = fastweb.command.service:',
+            'fastthrift = fastweb.command.service.thrift:gen_thrift_auxiliary',
         ],
     },
     author='Bslience',

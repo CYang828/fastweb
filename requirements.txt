@@ -18,3 +18,6 @@ kombu==4.0.2
 autopep8
 gevent
 subprocess32
+docopt
+
+
