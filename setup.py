@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 
-version = '1.4.1'
+version = '1.4.1.1'
 
 with open('README.rst') as f:
         kwargs['long_description'] = f.read()
@@ -22,8 +22,13 @@ setup(
     version=version,
     packages=find_packages(),
     package_data={'fastweb': ['setting/default_logging.yaml']},
-    scripts=['requirements.txt'],
-    author='Sean',
-    description="FastWeb is a Python fast-building web frame refered by Tornado,Celery,Thrift",
+    scripts=[],
+    entry_points={
+        'console_scripts': [
+            'fastservice = fastweb.command.service:',
+        ],
+    },
+    author='Bslience',
+    description="FastWeb is a Python fast-building web frame refered by Tornado, Celery, Thrift",
     **kwargs
 )

@@ -160,3 +160,4 @@ class SyncComponents(Components):
         self.recorder('INFO', 'call subprocess successful\n<{cmd}> <{time} {msg}>'.format(
             cmd=command, time=t, msg=result.strip() if result else error.strip()))
         return result, error
+
