@@ -22,8 +22,8 @@ setup(
     version=version,
     packages=find_packages(),
     package_data={'fastweb': ['setting/default_logging.yaml']},
-    scripts=['requirements.txt'],
-    author='Sean',
-    description="FastWeb is a Python fast-building web frame refered by Tornado,Celery,Thrift",
+    scripts=[],
+    author='Bslience',
+    description="FastWeb is a Python fast-building web frame refered by Tornado, Celery, Thrift",
     **kwargs
 )
