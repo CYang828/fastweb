@@ -2,46 +2,71 @@
 
 """服务层模块"""
 
-import json
 import inspect
 
 from accesspoint import TServer, TSocket, TTransport, TBinaryProtocol
 
+from fastweb.manager import Manager
 from fastweb.util.log import recorder
+from fastweb.component import Component
 from fastweb.util.process import FProcess
-from fastweb.exception import ServiceError
-from fastweb.web import SyncComponents, Components
-from fastweb.util.configuration import Configuration
+from fastweb.components import SyncComponents, Components
 from fastweb.util.python import load_module, to_iter, load_object
 
 
+__all__ = ['start_service_server']
 DEFAULT_THREADPOOL_SIZE = 1000
 
 
-class MicroService(object):
+class Service(Component):
     """微服务类
 
     多个ABLogic组成一个微服务
 
     :parameter:
       - `name`:微服务名
-      - `thrift_module`:thrift生成模块路径
-      - `service_handlers`:处理句柄类对象列表
+      - `port`: 启动端口号,如果为列表则生成多个进程,配置必填项
+      - `thrift_module`:thrift生成模块路径，系统可查找或相对启动路径类路径,只能有一个
+      - `handlers`: 处理具体业务的handler类,可以为列表或单个类
+      - `daemon`: 是否以守护进程的形式启动
+      - `active`: 是否可用
+      - `size`: 线程池大小
     """
 
-    def __init__(self, name, thrift_module, handlers):
-        self.name = name
-        self._module = thrift_module
-        self._handler = to_iter(handlers)
+    eattr = {'name': str, 'port': int, 'thrift_module': str, 'handlers': str}
+    oattr = {'size': int, 'daemon': bool, 'active': bool}
+
+    def __init__(self, setting):
+        super(Service, self).__init__(setting)
+
+        # 设置service属性
+        self.name = self.setting['name']
+        self._port = self.setting['port']
+        self._thrift_module = self.setting['thrift_module']
+        self._handlers = self.setting['handlers']
+        handlers = to_iter(self._handlers)
+        self._daemon = self.setting.get('daemon', True)
+        self._active = self.setting.get('active', False)
+        self.size = self.setting.get('size', DEFAULT_THREADPOOL_SIZE)
+
+        # 合并多个handler为一个
         # TODO:handler合并应该遵守一些规则
-        self._handler = type('Handler', self._handler, {})() if len(self._handler) > 1 else handlers
+        if isinstance(self._handlers, (tuple, list)):
+            self._handlers = (load_object(handler) for handler in self._handlers)
+        elif isinstance(self._handlers, str):
+            self._handlers = (load_object(self._handlers))
+        try:
+            self._handlers = type('Handler', handlers, {})() if len(handlers) > 1 else self._handlers
+        except TypeError as e:
+            self.recorder('CRITICAL', 'handler conflict (e)'.format(e=e))
 
     def __str__(self):
-        return '<MicroService|{name} {module}->{handler}>'.format(name=self.name,
-                                                                  module=self._module,
-                                                                  handler=self._handler)
+        return '<Service|{name} {port} {module}->{handler}>'.format(name=self.name,
+                                                                    port=self._port,
+                                                                    module=self._thrift_module,
+                                                                    handler=self._handlers)
 
-    def start(self, port, size, daemon=True):
+    def start(self):
         """微服务开始
 
         生成一个微服务
@@ -51,20 +76,19 @@ class MicroService(object):
         """
 
         # 将所有的handlers合并成一个handler
-        port = int(port)
-        module = load_module(self._module)
-        processor = getattr(module, 'Processor')(self._handler())
-        transport = TSocket.TServerSocket(port=port)
+        module = load_module(self._thrift_module)
+        processor = getattr(module, 'Processor')(self._handlers())
+        transport = TSocket.TServerSocket(port=self._port)
         tfactory = TTransport.TFramedTransportFactory()
         pfactory = TBinaryProtocol.TBinaryProtocolFactory()
-        server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory, daemon=daemon)
-        server.setNumThreads(size)
-        recorder('INFO', '{svr} start at <{port}> threadpool size <{size}>'.format(svr=self, port=port, size=size))
+        server = TServer.TThreadPoolServer(processor, transport, tfactory, pfactory, daemon=self._daemon)
+        server.setNumThreads(self.size)
+        recorder('INFO', '{svr} start at <{port}> threadpool size <{size}>'.format(svr=self, port=self._port, size=self.size))
 
         try:
             server.serve()
         except KeyboardInterrupt:
-            recorder('INFO', '{svr} stop at <{port}>'.format(svr=self, port=port))
+            recorder('INFO', '{svr} stop at <{port}>'.format(svr=self, port=self._port))
 
 
 class ABLogic(SyncComponents):
@@ -81,12 +105,12 @@ class Table(Components):
         super(Table, self).__init__()
 
 
-def start_server(config_path):
+def start_service_server():
     """强制使用config的方式来配置微服务
 
     port: 启动端口号,如果为列表则生成多个进程,配置必填项
     thrift_module:  thrift生成的模块类路径,系统可查找或相对启动路径类路径,只能有一个
-    service_handlers: 处理具体业务的handler类,可以为列表或单个类
+    handlers: 处理具体业务的handler类,可以为列表或单个类
     daemon: 是否以守护进程的形式启动
     active: 是否可用
     size: 线程池大小
@@ -95,50 +119,13 @@ def start_server(config_path):
       - `config_path`:配置文件路径
     """
 
-    configuration = Configuration(backend='ini', path=config_path)
-    microservices = configuration.get_components('microservice')
+    # 将调用者路径加入到包查找路径中
+    import sys
+    sys.path.append(inspect.stack()[1][1])
+    del sys
 
-    recorder('INFO', 'service configuration\n{conf}'.format(conf=json.dumps(configuration.configs, indent=4)))
+    services = Manager.get_classified_components('service')
 
-    for name, value in microservices.items():
-        config = configuration.configs[name]
-        name = value['object']
-
-        port = config.get('port')
-        if not port or not isinstance(port, (float, list)):
-            recorder('CRITICAL', 'please specify port {conf}'.format(conf=config))
-            raise ServiceError
-
-        ports = to_iter(port)
-
-        # 将调用者路径加入到包查找路径中
-        import sys
-        sys.path.append(inspect.stack()[1][1])
-        del sys
-
-        # 每个微服务只能在thrift中指定一个service,对应只有一个thrift模块
-        thrift_module = config.get('thrift_module')
-        if not thrift_module or not isinstance(thrift_module, str):
-            recorder('CRITICAL', 'please specify thrift_module {conf}'.format(conf=config))
-            raise ServiceError
-
-        handlers = config.get('handlers')
-        if isinstance(handlers, list):
-            handlers = [load_object(handler) for handler in handlers]
-        elif isinstance(handlers, str):
-            handlers = load_object(handlers)
-        if not handlers or isinstance(handlers, (str, list)):
-            recorder('CRITICAL', 'please specify handlers {conf}'.format(conf=config))
-            raise ServiceError
-
-        # 默认为守护进程
-        daemon = config.get('daemon', True)
-        # 默认微服务不活跃
-        active = config.get('active', False)
-        size = config.get('size', DEFAULT_THREADPOOL_SIZE)
-
-        if active:
-            for port in ports:
-                microservice = MicroService(name, thrift_module=thrift_module, handlers=handlers)
-                process = FProcess(name='microservice', task=microservice.start, port=port, size=size, daemon=daemon)
-                process.start()
+    for service in services:
+        process = FProcess(name='ServiceProcess', task=service.start)
+        process.start()

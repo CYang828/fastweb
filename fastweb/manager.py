@@ -3,14 +3,13 @@
 """组件管理模块"""
 
 import json
+from collections import defaultdict
 
 import fastweb.loader
 from fastweb.util.log import recorder
 from accesspoint import coroutine
 from fastweb.exception import ManagerError
-from fastweb.setting.default_component import COMPONENTS
 from fastweb.pool import ConnectionPool, SyncConnectionPool, AsynConnectionPool
-from fastweb.setting.default_connection_component import SYNC_CONN_COMPONENTS, ASYN_CONN_COMPONENTS
 
 
 class Manager(object):
@@ -26,14 +25,17 @@ class Manager(object):
     在取出时判断取出的方式
     """
 
-    # 组件池 _pools:{component_name: component_pool}
+    # 组件池 _pools: {component_name: component_pool}
+    # 被分类的组件池 _classified_pools: {cpre: [obj, obj, ..]}
     _pools = {}
+    _classified_pools = defaultdict(list)
 
     @staticmethod
     def setup(configer):
         """安装组件"""
 
-        recorder('DEBUG', 'manager setup start')
+        recorder('DEBUG', 'default component manager setup start')
+        from fastweb.setting.default_component import COMPONENTS
 
         if configer:
             for (cpre, cls) in COMPONENTS:
@@ -43,8 +45,15 @@ class Manager(object):
                     config = configer.configs[name]
                     com = cls(config)
                     Manager._pools[value['object']] = com
+                    Manager._classified_pools[cpre].append(com)
 
         recorder('DEBUG', 'manager setup successful\n{pool}'.format(pool=Manager._pools))
+
+    @staticmethod
+    def get_classified_components(cpre):
+        """获取被分类的组件"""
+
+        return Manager._classified_pools.get(cpre, [])
 
     @staticmethod
     def get_component(name, obj):
@@ -99,7 +108,8 @@ class SyncConnManager(Manager):
          初始化组件时,尽快的抛出准确的错误信息
          """
 
-        recorder('DEBUG', 'synchronize manager setup start')
+        recorder('DEBUG', 'synchronize connection component manager setup start')
+        from fastweb.setting.default_connection_component import SYNC_CONN_COMPONENTS
 
         if configer:
             for (cpre, cls, default_size) in SYNC_CONN_COMPONENTS:
@@ -128,7 +138,8 @@ class AsynConnManager(Manager):
         初始化组件时,尽快的抛出准确的错误信息
         """
 
-        recorder('DEBUG', 'asynchronous manager setup start')
+        recorder('DEBUG', 'asynchronous connection component manager setup start')
+        from fastweb.setting.default_connection_component import ASYN_CONN_COMPONENTS
 
         if AsynConnManager.configer:
             for (cpre, cls, default_size) in ASYN_CONN_COMPONENTS:

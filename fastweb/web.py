@@ -12,8 +12,7 @@ import subprocess
 from fastweb.accesspoint import (web, coroutine, Task, Return, options,
                                  AsyncHTTPClient, HTTPError, Subprocess, httpserver, ioloop, HTTPRequest, run_on_executor)
 
-
-import fastweb.coms
+import fastweb.components
 from fastweb.util.tool import timing
 from fastweb.util.log import recorder
 from fastweb.util.thread import FThread
@@ -63,7 +62,7 @@ class Request(HTTPRequest):
         return '<Request {method} {url} {body}>'.format(method=self.method, url=self.url, body=self.body)
 
 
-class AsynComponents(fastweb.coms.Components):
+class AsynComponents(fastweb.components.Components):
     """异步组件类"""
 
     @coroutine

@@ -1,16 +1,6 @@
 #!/usr/bin/python2.7
-# *-*coding:utf8*-*
-#
-# Copyright 2015 Adapter
-#
+# coding:utf8
 
-"""Service entrance.
-
-Add handler and load super global variables here.
-
-"""
-
-import os
 
 from fastweb.web import options, start_web_server
 from fastweb.loader import app
