@@ -23,6 +23,11 @@ setup(
     packages=find_packages(),
     package_data={'fastweb': ['setting/default_logging.yaml']},
     scripts=[],
+    entry_points={
+        'console_scripts': [
+            'fastservice = fastweb.command.service:',
+        ],
+    },
     author='Bslience',
     description="FastWeb is a Python fast-building web frame refered by Tornado, Celery, Thrift",
     **kwargs
