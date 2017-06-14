@@ -2,7 +2,6 @@
 
 """第三方模块接入点"""
 
-
 import tornado
 from tornado.web import UIModule
 from tornado import web, iostream
@@ -15,6 +14,8 @@ from tornado import gen, web, httpserver, ioloop
 from tornado.gen import coroutine, Return, Task, sleep
 from tornado.httpclient import HTTPClient, AsyncHTTPClient, HTTPError, HTTPRequest
 
+import gevent
+
 from kombu import Queue, Exchange
 from celery.exceptions import Ignore
 from celery import Task as CeleryTask, platforms, Celery, task, states
@@ -23,3 +24,5 @@ from thrift.server import TServer
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
+
+from subprocess32 import Popen
