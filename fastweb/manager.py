@@ -8,9 +8,7 @@ import fastweb.loader
 from fastweb.util.log import recorder
 from accesspoint import coroutine
 from fastweb.exception import ManagerError
-from fastweb.setting.default_component import COMPONENTS
 from fastweb.pool import ConnectionPool, SyncConnectionPool, AsynConnectionPool
-from fastweb.setting.default_connection_component import SYNC_CONN_COMPONENTS, ASYN_CONN_COMPONENTS
 
 
 class Manager(object):
@@ -33,7 +31,8 @@ class Manager(object):
     def setup(configer):
         """安装组件"""
 
-        recorder('DEBUG', 'manager setup start')
+        recorder('DEBUG', 'default component manager setup start')
+        from fastweb.setting.default_component import COMPONENTS
 
         if configer:
             for (cpre, cls) in COMPONENTS:
@@ -99,7 +98,8 @@ class SyncConnManager(Manager):
          初始化组件时,尽快的抛出准确的错误信息
          """
 
-        recorder('DEBUG', 'synchronize manager setup start')
+        recorder('DEBUG', 'synchronize connection component manager setup start')
+        from fastweb.setting.default_connection_component import SYNC_CONN_COMPONENTS
 
         if configer:
             for (cpre, cls, default_size) in SYNC_CONN_COMPONENTS:
@@ -128,7 +128,8 @@ class AsynConnManager(Manager):
         初始化组件时,尽快的抛出准确的错误信息
         """
 
-        recorder('DEBUG', 'asynchronous manager setup start')
+        recorder('DEBUG', 'asynchronous connection component manager setup start')
+        from fastweb.setting.default_connection_component import ASYN_CONN_COMPONENTS
 
         if AsynConnManager.configer:
             for (cpre, cls, default_size) in ASYN_CONN_COMPONENTS:

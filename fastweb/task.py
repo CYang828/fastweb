@@ -13,7 +13,7 @@ from fastweb.components import SyncComponents
 from fastweb.accesspoint import CeleryTask, Celery, Ignore, Queue, Exchange, coroutine, Return
 
 
-__all__ = ['Task']
+__all__ = ['start_task_worker']
 applications = []
 
 

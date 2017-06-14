@@ -10,15 +10,16 @@ from accesspoint import TServer, TSocket, TTransport, TBinaryProtocol
 from fastweb.util.log import recorder
 from fastweb.util.process import FProcess
 from fastweb.exception import ServiceError
-from fastweb.web import SyncComponents, Components
+from fastweb.components import SyncComponents, Components
 from fastweb.util.configuration import Configuration
 from fastweb.util.python import load_module, to_iter, load_object
 
 
+__all__ = ['start_service_server']
 DEFAULT_THREADPOOL_SIZE = 1000
 
 
-class MicroService(object):
+class Service(object):
     """微服务类
 
     多个ABLogic组成一个微服务
@@ -37,7 +38,7 @@ class MicroService(object):
         self._handler = type('Handler', self._handler, {})() if len(self._handler) > 1 else handlers
 
     def __str__(self):
-        return '<MicroService|{name} {module}->{handler}>'.format(name=self.name,
+        return '<Service|{name} {module}->{handler}>'.format(name=self.name,
                                                                   module=self._module,
                                                                   handler=self._handler)
 
@@ -81,7 +82,7 @@ class Table(Components):
         super(Table, self).__init__()
 
 
-def start_server(config_path):
+def start_service_server(config_path):
     """强制使用config的方式来配置微服务
 
     port: 启动端口号,如果为列表则生成多个进程,配置必填项
@@ -96,7 +97,7 @@ def start_server(config_path):
     """
 
     configuration = Configuration(backend='ini', path=config_path)
-    microservices = configuration.get_components('microservice')
+    microservices = configuration.get_components('service')
 
     recorder('INFO', 'service configuration\n{conf}'.format(conf=json.dumps(configuration.configs, indent=4)))
 
@@ -105,7 +106,7 @@ def start_server(config_path):
         name = value['object']
 
         port = config.get('port')
-        if not port or not isinstance(port, (float, list)):
+        if not port or not isinstance(port, (int, list)):
             recorder('CRITICAL', 'please specify port {conf}'.format(conf=config))
             raise ServiceError
 
@@ -139,6 +140,6 @@ def start_server(config_path):
 
         if active:
             for port in ports:
-                microservice = MicroService(name, thrift_module=thrift_module, handlers=handlers)
-                process = FProcess(name='microservice', task=microservice.start, port=port, size=size, daemon=daemon)
+                microservice = Service(name, thrift_module=thrift_module, handlers=handlers)
+                process = FProcess(name='service', task=microservice.start, port=port, size=size, daemon=daemon)
                 process.start()

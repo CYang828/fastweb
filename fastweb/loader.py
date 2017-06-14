@@ -12,10 +12,12 @@ from accesspoint import ioloop
 import fastweb.manager
 from fastweb.util.tool import timing
 from fastweb.exception import FastwebException
-from fastweb.setting.default_errcode import ERRCODE
 from fastweb.pattern import SyncPattern, AsynPattern
 from fastweb.util.configuration import Configuration
 from fastweb.util.log import get_yaml_logging_setting, setup_logging, getLogger, recorder, check_logging_level
+
+
+__all__ = ['app', 'SyncPattern', 'AsynPattern']
 
 
 class Loader(object):
@@ -135,7 +137,12 @@ class Loader(object):
           - `errcode`:自定义错误码
         """
 
-        self.errcode = errcode if errcode else ERRCODE
+        if errcode:
+            self.errcode = errcode
+        else:
+            from fastweb.setting.default_errcode import ERRCODE
+            self.errcode = ERRCODE
+
         recorder('INFO', 'load errcode\n{errcode}'.format(errcode=json.dumps(self.errcode, indent=4)))
         return self.errcode
 

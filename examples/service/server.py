@@ -1,9 +1,10 @@
 # coding:utf8
 
 
-from fastweb.service import MicroService
-from handlers.hello import HelloServiceHandler
+from fastweb.loader import app
+from fastweb.service import start_service_server
 
 
-service = MicroService('service_demo', thrift_module='gen-py.HelloService.HelloService', handler=HelloServiceHandler)
-service.start(port=8888)
+app.load_recorder('service.log', system_log_path='sys.log', system_level='DEBUG')
+if __name__ == '__main__':
+    start_service_server('service.ini')
