@@ -5,7 +5,8 @@
 import sys
 from multiprocessing import Process
 
-import torcelery
+from fastweb import torcelery
+from fastweb.manager import Manager
 from fastweb.util.tool import timing
 from fastweb.component import Component
 from fastweb.util.python import load_object
@@ -14,7 +15,6 @@ from fastweb.accesspoint import CeleryTask, Celery, Ignore, Queue, Exchange, cor
 
 
 __all__ = ['start_task_worker']
-applications = []
 
 
 class Task(Component, CeleryTask, SyncComponents):
@@ -46,7 +46,6 @@ class Task(Component, CeleryTask, SyncComponents):
                         task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}})
 
         # task和application绑定
-        applications.append(app)
         self.application = app
         self.bind(app)
 
@@ -174,9 +173,11 @@ def start_task_worker():
     # 通过篡改命令行的参数更改application的node名称
     # 命令行中的-n参数会失效
 
-    for application in applications:
+    tasks = Manager.get_classified_components('task')
+
+    for task in tasks:
         argv = sys.argv
         argv.append('-n')
-        argv.append('fastweb@celery@{app}'.format(app=application.main))
-        p = Process(target=application.start, args=(argv,))
+        argv.append('fastweb@celery@{app}'.format(app=task.name))
+        p = Process(target=task.application.start, args=(argv,))
         p.start()

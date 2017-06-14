@@ -1,5 +1,8 @@
 # coding:utf8
 
-import fastweb.task
+from fastweb.task import Task
+from fastweb.service import Service
 
-COMPONENTS = [('task', fastweb.task.Task)]
+
+COMPONENTS = [('task', Task),
+              ('service', Service)]

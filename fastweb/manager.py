@@ -3,6 +3,7 @@
 """组件管理模块"""
 
 import json
+from collections import defaultdict
 
 import fastweb.loader
 from fastweb.util.log import recorder
@@ -24,8 +25,10 @@ class Manager(object):
     在取出时判断取出的方式
     """
 
-    # 组件池 _pools:{component_name: component_pool}
+    # 组件池 _pools: {component_name: component_pool}
+    # 被分类的组件池 _classified_pools: {cpre: [obj, obj, ..]}
     _pools = {}
+    _classified_pools = defaultdict(list)
 
     @staticmethod
     def setup(configer):
@@ -42,8 +45,15 @@ class Manager(object):
                     config = configer.configs[name]
                     com = cls(config)
                     Manager._pools[value['object']] = com
+                    Manager._classified_pools[cpre].append(com)
 
         recorder('DEBUG', 'manager setup successful\n{pool}'.format(pool=Manager._pools))
+
+    @staticmethod
+    def get_classified_components(cpre):
+        """获取被分类的组件"""
+
+        return Manager._classified_pools.get(cpre, [])
 
     @staticmethod
     def get_component(name, obj):
