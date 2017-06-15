@@ -52,7 +52,7 @@ class ThriftCommand(Script):
                           'port=\n' \
                           'thrift_module={hub}\n' \
                           'handlers={handler}\n' \
-                          'active='.format(hub=)
+                          'active='.format()
 
 
 def gen_thrift_auxiliary():
