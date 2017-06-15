@@ -119,16 +119,21 @@ class SyncComponents(Components):
           - `request`:http请求
         """
 
-        self.recorder('INFO', 'http request start {request}'.format(request=request))
+        if hasattr(self, 'requestid'):
+            _recorder = self.recorder
+        else:
+            _recorder = recorder
+
+        _recorder('INFO', 'http request start {request}'.format(request=request))
 
         with timing('ms', 10) as t:
             try:
                 response = HTTPClient().fetch(request)
             except HttpError as ex:
-                self.recorder('ERROR', 'http request error {request} {e}'.format(request=request, e=ex))
+                _recorder('ERROR', 'http request error {request} {e}'.format(request=request, e=ex))
                 raise HttpError
 
-        self.recorder('INFO', 'http request successful\n{response} -- {time}'.format(response=response.code, time=t))
+        _recorder('INFO', 'http request successful\n{response} -- {time}'.format(response=response.code, time=t))
         return response
 
     def call_subprocess(self, command, stdin_data=None):
@@ -139,7 +144,12 @@ class SyncComponents(Components):
           - `stdin_data`:传入数据
         """
 
-        self.recorder('INFO', 'call subprocess start\n<{cmd}>'.format(cmd=command))
+        if hasattr(self, 'requestid'):
+            _recorder = self.recorder
+        else:
+            _recorder = recorder
+
+        _recorder('INFO', 'call subprocess start\n{cmd}'.format(cmd=command))
 
         with timing('ms', 10) as t:
             sub_process = subprocess.Popen(shlex.split(command),
@@ -148,16 +158,16 @@ class SyncComponents(Components):
             try:
                 result, error = sub_process.communicate(stdin_data)
             except (OSError, ValueError) as ex:
-                self.recorder('ERROR', 'call subprocess\n<{cmd}> ({e}) '.format(
+                _recorder('ERROR', 'call subprocess\n({cmd}) ({e}) '.format(
                     cmd=command, e=ex, msg=result.strip() if result else error.strip()))
                 raise SubProcessError
 
         if sub_process.returncode != 0:
-            self.recorder('ERROR', 'call subprocess <{cmd}> <{time}> {msg}'.format(
+            _recorder('ERROR', 'call subprocess error ({cmd}) <{time}> {msg}'.format(
                 cmd=command, time=t, msg=result.strip() if result else error.strip()))
             raise SubProcessError
 
-        self.recorder('INFO', 'call subprocess successful\n<{cmd}> <{time} {msg}>'.format(
+        _recorder('INFO', 'call subprocess successful\n{cmd}\n{msg}\n<{time}>'.format(
             cmd=command, time=t, msg=result.strip() if result else error.strip()))
         return result, error
 

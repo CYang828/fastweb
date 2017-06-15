@@ -15,6 +15,7 @@ Options:
 import os
 
 from fastweb.script import Script
+from fastweb.util.log import recorder
 from fastweb.accesspoint import docopt
 
 
@@ -36,11 +37,22 @@ class ThriftCommand(Script):
 
         hub_module_name = 'fastweb-gen-{language}'.format(language=language)
         hub_path = os.path.join(hub_path, hub_module_name)
-        command = 'thrift --gen {language} {idl} -out {out}'.format(language=language, idl=idl, out=hub_path)
+        try:
+            os.mkdir(hub_path)
+        except OSError:
+            pass
 
-        print command
-
+        command = 'thrift --gen {language} -out {out} {idl} '.format(language=language, idl=idl, out=hub_path)
         self.call_subprocess(command)
+        recorder('INFO', 'thrift hub code module path: {hub}\nload thrift of fastweb path: {config}'.format(hub=hub_path,
+                                                                                                            config=config_path))
+        thrift_template = '# fastthrift gen template\n\n' \
+                          '[service:service_name]\n' \
+                          'name=\n' \
+                          'port=\n' \
+                          'thrift_module={hub}\n' \
+                          'handlers={handler}\n' \
+                          'active='.format(hub=)
 
 
 def gen_thrift_auxiliary():

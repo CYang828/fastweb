@@ -15,6 +15,13 @@ from fastweb.accesspoint import coroutine, Return
 head = lambda o, h: '{head}{ori}'.format(head=h, ori=o)
 
 
+def filepath2pythonpath(filepath):
+    if filepath.startswith('./'):
+        filepath = filepath.lstrip('./')
+
+    filepath.endswith('/')
+
+
 def format(st, whole=0):
     if whole:
         return '\n'.join([head(e, whole * ' ') for e in st.split('\n')])

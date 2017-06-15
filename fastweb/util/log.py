@@ -13,6 +13,7 @@ import fastweb
 from fastweb.exception import ParameterError
 
 
+bSetupLogging = False
 LOGGING_LEVEL = ['INFO',
                  'DEBUG',
                  'WARN',
@@ -51,6 +52,7 @@ def setup_logging(setting):
       - `setting`:配置"""
 
     logging.config.dictConfig(setting)
+    bSetupLogging = True
 
 
 def recorder(level, msg):
@@ -63,7 +65,10 @@ def recorder(level, msg):
       - `msg`:日志信息
     """
 
-    rec = fastweb.loader.app.system_recorder if fastweb.loader.app.system_recorder else logging
+    if not bSetupLogging:
+        setup_logging(get_yaml_logging_setting())
+
+    rec = fastweb.loader.app.system_recorder if fastweb.loader.app.system_recorder else getLogger('system_recorder')
     record(level, msg, rec)
 
 
