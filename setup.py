@@ -22,7 +22,7 @@ setup(
     version=version,
     packages=find_packages(),
     package_data={'fastweb': ['setting/default_logging.yaml']},
-    scripts=[],
+    scripts=['requirements.txt'],
     entry_points={
         'console_scripts': [
             'fastthrift = fastweb.command.service.thrift:gen_thrift_auxiliary',

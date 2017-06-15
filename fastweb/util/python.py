@@ -19,7 +19,11 @@ def filepath2pythonpath(filepath):
     if filepath.startswith('./'):
         filepath = filepath.lstrip('./')
 
-    filepath.endswith('/')
+    if filepath.endswith('/'):
+        filepath = filepath.rstrip('/')
+
+    pythonpath = filepath.replace('/', '.')
+    return pythonpath
 
 
 def format(st, whole=0):
@@ -100,10 +104,10 @@ class AsynProxyCall(object):
         self.proxy.recorder('INFO', 'call {proxy} <{method}> start')
         try:
             with fastweb.util.tool.timing('ms', 8) as t:
-                yield getattr(self.proxy._other, self._method)(*arg, **kwargs)
+                ret = yield getattr(self.proxy._other, self._method)(*arg, **kwargs)
             self.proxy.recorder('INFO', 'call {proxy} <{method}> success <{time}>'.format(proxy=self.proxy,
                                                                                           method=self._method, time=t))
-            raise Return()
+            raise Return(ret)
         except TTransportException as e:
             self.proxy.recorder('ERROR',
                                 'call {proxy} <{method}> error {e} ({msg})\nreconnect'.format(proxy=self.proxy,

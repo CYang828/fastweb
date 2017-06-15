@@ -5,3 +5,4 @@ class HelloServiceHandler(object):
 
     def sayHello(self):
         print 'sayHello'
+        return 'hello'

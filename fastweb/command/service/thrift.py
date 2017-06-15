@@ -17,6 +17,7 @@ import os
 from fastweb.script import Script
 from fastweb.util.log import recorder
 from fastweb.accesspoint import docopt
+from fastweb.util.python import filepath2pythonpath, load_object
 
 
 class ThriftCommand(Script):
@@ -26,17 +27,21 @@ class ThriftCommand(Script):
 
         args = docopt(__doc__)
         language = None
+        hub_package = None
         idl = args['<idl>']
         hub_path = args['--outhub']
         config_path = args['--outconfig']
 
         if args['--pattern'] == 'async':
             language = 'py:tornado'
+            hub_package = 'py-tornado'
         elif args['--pattern'] == 'sync':
             language = 'py'
+            hub_package = 'py'
 
-        hub_module_name = 'fastweb-gen-{language}'.format(language=language)
+        hub_module_name = 'fastweb-gen-{hub_package}'.format(hub_package=hub_package)
         hub_path = os.path.join(hub_path, hub_module_name)
+
         try:
             os.mkdir(hub_path)
         except OSError:
@@ -46,13 +51,18 @@ class ThriftCommand(Script):
         self.call_subprocess(command)
         recorder('INFO', 'thrift hub code module path: {hub}\nload thrift of fastweb path: {config}'.format(hub=hub_path,
                                                                                                             config=config_path))
+        hub_package_path = filepath2pythonpath(hub_path)
         thrift_template = '# fastthrift gen template\n\n' \
                           '[service:service_name]\n' \
                           'name=\n' \
                           'port=\n' \
                           'thrift_module={hub}\n' \
-                          'handlers={handler}\n' \
-                          'active='.format()
+                          'handlers=\n' \
+                          'active='.format(hub=hub_package_path)
+
+        hub_module = load_object(hub_package_path)
+        print hub_module
+        recorder('CRITICAL', thrift_template)
 
 
 def gen_thrift_auxiliary():
