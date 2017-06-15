@@ -8,8 +8,8 @@ Usage:
 Options:
     -h --help     Show this screen.
     -p --pattern=<p>  Pattern(sync|async). [default: async]
-    -oh --outhub=<oh>   Output thrift hub module path. [default: .]
-    -oc --outconfig=<oc>    Output load thrift of fastweb path. [default: .]
+    -oh --outhub=<oh>   Output thrift hub module path. [default: ]
+    -oc --outconfig=<oc>    Output load thrift of fastweb path. [default: ]
 """
 
 import os
@@ -43,6 +43,7 @@ class ThriftCommand(Script):
         # package 名字中不能存在`-`，无法导入
         hub_module_name = 'fastweb_thrift_{hub_package}'.format(hub_package=hub_package)
         hub_path = os.path.join(hub_path, hub_module_name)
+        hub_abspath = os.path.join(cwd, hub_path)
 
         try:
             os.mkdir(hub_path)
@@ -61,6 +62,9 @@ class ThriftCommand(Script):
                           'thrift_module={hub}\n' \
                           'handlers=\n' \
                           'active='.format(hub=hub_package_path)
+
+        for d in os.listdir(hub_abspath):
+            print d
 
         recorder('CRITICAL', thrift_template)
 

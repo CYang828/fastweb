@@ -2,6 +2,7 @@
 
 """python特性"""
 
+import os
 import six
 import json
 import hashlib
@@ -167,3 +168,11 @@ def md5(s):
     md = hashlib.md5()
     md.update(s)
     return md.hexdigest()
+
+
+def listfile(path, folder):
+    """列出所有的文件"""
+
+    pass
+
+
