@@ -17,7 +17,7 @@ import os
 from fastweb.script import Script
 from fastweb.util.log import recorder
 from fastweb.accesspoint import docopt
-from fastweb.util.python import filepath2pythonpath, load_object
+from fastweb.util.python import filepath2pythonpath, load_module
 
 
 class ThriftCommand(Script):
@@ -25,6 +25,7 @@ class ThriftCommand(Script):
     def gen_thrift_auxiliary(self):
         """生成与thrift相关的桩代码（hub code）和配置文件"""
 
+        cwd = os.getcwd()
         args = docopt(__doc__)
         language = None
         hub_package = None
@@ -34,12 +35,13 @@ class ThriftCommand(Script):
 
         if args['--pattern'] == 'async':
             language = 'py:tornado'
-            hub_package = 'py-tornado'
+            hub_package = 'async'
         elif args['--pattern'] == 'sync':
             language = 'py'
-            hub_package = 'py'
+            hub_package = 'sync'
 
-        hub_module_name = 'fastweb-gen-{hub_package}'.format(hub_package=hub_package)
+        # package 名字中不能存在`-`，无法导入
+        hub_module_name = 'fastweb_thrift_{hub_package}'.format(hub_package=hub_package)
         hub_path = os.path.join(hub_path, hub_module_name)
 
         try:
@@ -60,8 +62,6 @@ class ThriftCommand(Script):
                           'handlers=\n' \
                           'active='.format(hub=hub_package_path)
 
-        hub_module = load_object(hub_package_path)
-        print hub_module
         recorder('CRITICAL', thrift_template)
 
 
