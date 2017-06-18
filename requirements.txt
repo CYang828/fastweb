@@ -1,4 +1,3 @@
-pyyaml
 thrift
 tornado
 requests
@@ -19,5 +18,5 @@ autopep8
 gevent
 subprocess32
 docopt
-
+ply
 

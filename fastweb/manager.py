@@ -43,7 +43,9 @@ class Manager(object):
 
                 for name, value in components.items():
                     config = configer.configs[name]
+                    config['_name'] = value['object']
                     com = cls(config)
+                    cls.name = value['object']
                     Manager._pools[value['object']] = com
                     Manager._classified_pools[cpre].append(com)
 

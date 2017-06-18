@@ -1,16 +1,15 @@
 # coding:utf8
 
-import os
 import logging
 import traceback
 import logging.config
 from logging import getLogger
 
-import yaml
 from termcolor import colored
 
 import fastweb
 from fastweb.exception import ParameterError
+from fastweb.setting.default_logging import DEFAULT_LOGGING_SETTING
 
 
 bSetupLogging = False
@@ -20,29 +19,6 @@ LOGGING_LEVEL = ['INFO',
                  'ERROR',
                  'CRITICAL',
                  'IMPORTANT']
-
-DEFAULT_YAML_LOGGING_EVN = 'YAML_LOG_CFG'
-DEFAULT_YAML_LOGGING_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, 'setting/default_logging.yaml'))
-
-
-def get_yaml_logging_setting(path=DEFAULT_YAML_LOGGING_PATH, env_key=DEFAULT_YAML_LOGGING_EVN):
-    """从yaml文件中获取logging配置
-
-    先从环境变量env_key获取配置文件,如果不存在则从path中获取配置文件
-
-    :parameter:
-      - `path`:yaml文件路径
-      - `env_key`:yaml配置环境变量,默认为YAML_LOG_CFG"""
-
-    setting = None
-    value = os.getenv(env_key, None)
-    path = value if value else path
-
-    if os.path.exists(path):
-        with open(path, 'rt') as f:
-            setting = yaml.safe_load(f.read())
-
-    return setting
 
 
 def setup_logging(setting):
@@ -66,7 +42,7 @@ def recorder(level, msg):
     """
 
     if not bSetupLogging:
-        setup_logging(get_yaml_logging_setting())
+        setup_logging(DEFAULT_LOGGING_SETTING)
 
     rec = fastweb.loader.app.system_recorder if fastweb.loader.app.system_recorder else getLogger('system_recorder')
     record(level, msg, rec)

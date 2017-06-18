@@ -8,6 +8,7 @@ from multiprocessing import Process
 from fastweb import torcelery
 from fastweb.manager import Manager
 from fastweb.util.tool import timing
+from fastweb.exception import TaskError
 from fastweb.component import Component
 from fastweb.util.python import load_object
 from fastweb.components import SyncComponents
@@ -15,25 +16,28 @@ from fastweb.accesspoint import CeleryTask, Celery, Ignore, Queue, Exchange, cor
 
 
 __all__ = ['start_task_worker']
+DEFAULT_TIMEOUT = 3
 
 
 class Task(Component, CeleryTask, SyncComponents):
     """任务类"""
 
-    eattr = {'name': str, 'task_class': str, 'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
+    eattr = {'task_class': str, 'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
+    oattr = {'timeout': int}
 
     def __init__(self, setting):
         """初始化任务"""
 
-        super(Task, self).__init__(setting)
+        Component.__init__(self, setting)
         SyncComponents.__init__(self)
 
         # 设置任务的属性
-        self.name = self.setting['name']
+        self.name = setting['_name']
         self._broker = self.setting['broker']
         self._task_class = self.setting['task_class']
         self._backend = self.setting['backend']
         exchange_type = self.setting.get('exchange_type', 'direct')
+        self._timeout = self.setting.get('timeout', DEFAULT_TIMEOUT)
 
         # 设置绑定的application的属性
         app = Celery(main=self.name, broker=self._broker, backend='redis://localhost')
@@ -160,7 +164,14 @@ class Task(Component, CeleryTask, SyncComponents):
         # TODO:多个同步任务的链式调用
         with timing('ms', 10) as t:
             self.recorder('INFO', 'synchronize call {task} start'.format(task=self))
-            result = yield torcelery.sync(self, queue=self.queue, exchange=self.exchange, routing_key=self.routing_key, *args, **kwargs)
+            result = yield torcelery.sync(self, self._timeout, queue=self.queue, exchange=self.exchange,
+                                          routing_key=self.routing_key, *args, **kwargs)
+
+        if not result:
+            self.recorder('ERROR',
+                          'synchronize call {task} timeout -- {t}'.format(task=self, ret=result, t=t))
+            raise TaskError
+
         self.recorder('INFO', 'synchronize call {task} successful -- {ret} -- {t}'.format(task=self, ret=result, t=t))
         raise Return(result)
 

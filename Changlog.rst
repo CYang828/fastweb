@@ -1,3 +1,14 @@
+Version 1.4.1.3
+    add: 增加fasthrift脚本，帮助快速生成thrift桩代码和fastweb的配置文件
+    fix: 配置文件中name属性去掉，与section name歧义
+    update: 移除yaml形式默认日志配置，修改为json形式
+    fix: 日志系统每次开启都会生成info.log和error.log
+    fix: service层rpc调用完成没有返回值，注意idl中要有返回值类型
+    fix: 同步任务调用时，增加超时时间参数
+    add: service层ABLogic可以调用组件，调用方式与web层相同
+    add: 增加fasthrift工具
+    add: 使用travis进行持续集成
+
 Version 1.4.1.1
     fix: 修复同步调用系统命令函数，原采用subprocess调用系统命令，每次都需要创建子进程，面对大并发情况，性能较差
     update: fastweb.service.start_server -> start_service_server

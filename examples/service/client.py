@@ -3,7 +3,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 import sys, glob
-sys.path.append('gen-py.tornado')
+sys.path.append('fastweb_thrift_async')
 
 from HelloService import HelloService
 from HelloService.ttypes import *

@@ -194,7 +194,7 @@ class Api(web.RequestHandler, AsynComponents):
         self.write(json.dumps(ret))
         self.finish()
         self.release()
-        t = (self.request._finish_time - self.request._start_time) * 1000
+        t = (self.request._finish_time-self.request._start_time) * 1000
 
         if log:
             self.recorder(

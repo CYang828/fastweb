@@ -14,7 +14,7 @@ from fastweb.util.tool import timing
 from fastweb.exception import FastwebException
 from fastweb.pattern import SyncPattern, AsynPattern
 from fastweb.util.configuration import Configuration
-from fastweb.util.log import get_yaml_logging_setting, setup_logging, getLogger, recorder, check_logging_level
+from fastweb.util.log import setup_logging, getLogger, recorder, check_logging_level
 
 
 __all__ = ['app', 'SyncPattern', 'AsynPattern']
@@ -56,8 +56,8 @@ class Loader(object):
 
         # TODO:配色自定义
         if not logging_setting:
-            logging_setting = get_yaml_logging_setting(
-                logging_setting_path) if logging_setting_path else get_yaml_logging_setting()
+            from fastweb.setting.default_logging import DEFAULT_LOGGING_SETTING
+            logging_setting = DEFAULT_LOGGING_SETTING
 
         logging_setting['handlers']['application_file_time_handler']['filename'] = application_log_path
         logging_setting['handlers']['system_file_size_handler']['filename'] = system_log_path if system_log_path else application_log_path

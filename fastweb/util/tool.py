@@ -113,7 +113,8 @@ class Retry(object):
                 if delay:
                     Timer(delay, self.run).start()
                 else:
-                    yield self.run_asyn()
+                    ret = yield self.run_asyn()
+                    raise Return(ret)
             else:
                 self._obj.recorder('ERROR', '{name} retry error raise {exc}'.format(name=self._name, exc=e.error))
                 raise e.error

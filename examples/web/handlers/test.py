@@ -29,11 +29,11 @@ class Test(Api):
 
         #yield self.test_redis.call('set', 'name', 'jackson')
 
-        #yield self.hello_service.sayHello()
+        ret = yield self.hello_service.sayHello()
+        print ret
         #ret = yield self.http_client.fetch('http://www.baidu.com')
         request = Request(method='GET', url='http://www.baidu.com')
         ret = yield self.http_request(request)
-
 
         r = yield self.test_executor()
         print r

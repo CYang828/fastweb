@@ -66,3 +66,13 @@ class ParameterError(FastwebException):
 class ServiceError(FastwebException):
     """服务层错误"""
     pass
+
+
+class TaskError(ComponentError):
+    """任务错误"""
+    pass
+
+
+class ThriftParserError(ComponentError):
+    """thrift文件解析错误"""
+    pass

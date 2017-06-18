@@ -25,7 +25,7 @@ setup(
     scripts=['requirements.txt'],
     entry_points={
         'console_scripts': [
-            'fastthrift = fastweb.command.service.thrift:gen_thrift_auxiliary',
+            'fasthrift = fastweb.command.service.thrift:gen_thrift_auxiliary',
         ],
     },
     author='Bslience',

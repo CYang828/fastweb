@@ -16,6 +16,11 @@ from fastweb.accesspoint import coroutine, Return
 head = lambda o, h: '{head}{ori}'.format(head=h, ori=o)
 
 
+def write_file(filepath, content, pattern='a+'):
+    with open(filepath, pattern) as f:
+        f.write(content)
+
+
 def filepath2pythonpath(filepath):
     if filepath.startswith('./'):
         filepath = filepath.lstrip('./')
@@ -106,8 +111,10 @@ class AsynProxyCall(object):
         try:
             with fastweb.util.tool.timing('ms', 8) as t:
                 ret = yield getattr(self.proxy._other, self._method)(*arg, **kwargs)
-            self.proxy.recorder('INFO', 'call {proxy} <{method}> success <{time}>'.format(proxy=self.proxy,
-                                                                                          method=self._method, time=t))
+            self.proxy.recorder('INFO', 'call {proxy} <{method}> successful\n{ret} <{time}>'.format(proxy=self.proxy,
+                                                                                                    method=self._method,
+                                                                                                    ret=ret,
+                                                                                                    time=t))
             raise Return(ret)
         except TTransportException as e:
             self.proxy.recorder('ERROR',
@@ -170,9 +177,6 @@ def md5(s):
     return md.hexdigest()
 
 
-def listfile(path, folder):
-    """列出所有的文件"""
 
-    pass
 
 
