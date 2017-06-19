@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 
-version = '1.4.1.2'
+version = '1.4.1.3'
 
 with open('README.rst') as f:
         kwargs['long_description'] = f.read()
