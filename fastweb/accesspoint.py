@@ -14,8 +14,6 @@ from tornado import gen, web, httpserver, ioloop
 from tornado.gen import coroutine, Return, Task, sleep
 from tornado.httpclient import HTTPClient, AsyncHTTPClient, HTTPError, HTTPRequest
 
-import gevent
-
 from kombu import Queue, Exchange
 from celery.exceptions import Ignore
 from celery import Task as CeleryTask, platforms, Celery, task, states
