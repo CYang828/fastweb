@@ -20,7 +20,7 @@ from fastweb.util.python import to_plain
 from fastweb.exception import HttpError, SubProcessError
 
 
-__all__ = ['Api', 'Page', 'Request', 'options', 'arguments', 'start_web_server']
+__all__ = ['Api', 'Page', 'Request', 'arguments', 'start_web_server']
 
 
 class Request(HTTPRequest):

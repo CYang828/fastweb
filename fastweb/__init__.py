@@ -6,5 +6,11 @@
 
 from __future__ import absolute_import, division, print_function, with_statement
 
+from fastweb.loader import app
+from fastweb.accesspoint import options
+
+
+__all__ = ['options', 'app']
+
 
 
