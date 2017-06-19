@@ -6,7 +6,6 @@ hiredis
 pymysql
 pymongo
 termcolor
-pyyaml
 configparser
 tornado_mysql
 tormysql
@@ -15,7 +14,6 @@ tornadis
 motor
 kombu==4.0.2
 autopep8
-gevent
 subprocess32
 docopt
 ply

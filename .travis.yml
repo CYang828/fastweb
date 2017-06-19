@@ -1,1 +1,9 @@
 language: python
+language: python
+sudo: required
+cache: pip
+python:
+  - '2.7'
+os:
+  - 'linux'
+
