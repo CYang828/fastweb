@@ -177,6 +177,13 @@ def md5(s):
     return md.hexdigest()
 
 
+def guess_type(v):
+    if v.isdigit():
+        return int(v)
+    else:
+        return str(v)
+
+
 
 
 

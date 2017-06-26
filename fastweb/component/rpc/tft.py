@@ -34,7 +34,7 @@ class TftRpc(Component):
         raise NotImplementedError
 
 
-class SyncTftRpc(Component):
+class SyncTftRpc(TftRpc):
     """Thrift Rpc同步组件"""
 
     def __init__(self, **kwargs):
@@ -58,18 +58,20 @@ class SyncTftRpc(Component):
             raise ConfigurationError
 
         try:
-            transport = TSocket.TSocket(host, port)
+            transport = TSocket.TSocket(self.setting['host'], self.setting['port'])
             self._transport = TTransport.TBufferedTransport(transport)
             protocol = TBinaryProtocol.TBinaryProtocol(transport)
-            pfactory = TMultiplexedProtocol.TMultiplexedProtocol(protocol, service_name)
             self._transport.open()
-            self.client = getattr(module, 'Client')(pfactory)
+            self._client = getattr(module, 'Client')(protocol)
         except:
             raise RpcError
 
+    def reconnect(self):
+        pass
+
     def __getattr__(self, name):
-        if hasattr(self.client, name):
-            return getattr(self.client, name)
+        if hasattr(self._client, name):
+            return getattr(self._client, name)
 
     def close(self):
         self.transport.close()

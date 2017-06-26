@@ -40,7 +40,6 @@ DEFAULT_LOGGING_SETTING =\
             "interval": 1,
             "when": "D",
             "class": "logging.handlers.TimedRotatingFileHandler",
-            "filename": "app.log"
         },
         "system_file_size_handler": {
             "formatter": "system_formatter",
@@ -48,7 +47,6 @@ DEFAULT_LOGGING_SETTING =\
             "encoding": "utf8",
             "maxBytes": 10485760,
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "app.log"
         }
     }
 }

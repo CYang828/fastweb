@@ -26,3 +26,6 @@ from thrift.protocol import TBinaryProtocol
 from subprocess32 import Popen
 
 from docopt import docopt
+
+import pymysql
+import tornado_mysql

@@ -16,7 +16,7 @@ from fastweb.accesspoint import CeleryTask, Celery, Ignore, Queue, Exchange, cor
 
 
 __all__ = ['start_task_worker']
-DEFAULT_TIMEOUT = 3
+DEFAULT_TIMEOUT = 5
 
 
 class Task(Component, CeleryTask, SyncComponents):

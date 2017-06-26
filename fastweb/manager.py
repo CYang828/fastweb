@@ -77,7 +77,7 @@ class Manager(object):
             return component
         else:
             recorder('CRITICAL',
-                     'get component ({name}) error,,please check configuration\n{conf}'.format(conf=json.dumps(fastweb.loader.app.configs), name=name))
+                     'get component ({name}) error,please check configuration\n{conf}'.format(conf=json.dumps(fastweb.loader.app.configs), name=name))
             raise ManagerError
 
     @staticmethod

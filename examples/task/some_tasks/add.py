@@ -10,7 +10,7 @@ class Add(object):
         print '啊啊啊啊啊啊啊啊'
         print self
         print x+y
-        time.sleep(5)
+        time.sleep(3)
         return x+y
 
 

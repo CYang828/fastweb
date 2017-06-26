@@ -105,7 +105,7 @@ class SyncRedis(Component):
 class AsynRedis(Component):
     """异步redis组件"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs):
         self.rebuild(kwargs)
 
     @coroutine

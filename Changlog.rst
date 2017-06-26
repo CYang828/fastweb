@@ -1,3 +1,11 @@
+
+
+Version 1.4.1.6：
+    add: 增加fastcelery脚本工具
+    update: fastweb.app.loader.load_component参数更改
+    fix: redis参数问题
+    add: fast脚本工具
+
 Version 1.4.1.3
     add: 增加fasthrift脚本，帮助快速生成thrift桩代码和fastweb的配置文件
     fix: 配置文件中name属性去掉，与section name歧义
@@ -8,6 +16,7 @@ Version 1.4.1.3
     add: service层ABLogic可以调用组件，调用方式与web层相同
     add: 增加fasthrift工具
     add: 使用travis进行持续集成
+
 
 Version 1.4.1.1
     fix: 修复同步调用系统命令函数，原采用subprocess调用系统命令，每次都需要创建子进程，面对大并发情况，性能较差

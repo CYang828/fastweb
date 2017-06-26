@@ -11,13 +11,13 @@ from accesspoint import ioloop
 
 import fastweb.manager
 from fastweb.util.tool import timing
-from fastweb.exception import FastwebException
-from fastweb.pattern import SyncPattern, AsynPattern
 from fastweb.util.configuration import Configuration
-from fastweb.util.log import setup_logging, getLogger, recorder, check_logging_level
+from fastweb.util.log import setup_logging, getLogger, recorder, check_logging_level, set_record_color
 
 
 __all__ = ['app', 'SyncPattern', 'AsynPattern']
+DEFAULT_APP_LOG_PATH = 'fastweb@application.log'
+DEFAULT_SYS_LOG_PATH = 'fastweb@system.log'
 
 
 class Loader(object):
@@ -33,17 +33,15 @@ class Loader(object):
         self.system_recorder = None
         self.application_recorder = None
 
-        # 管理系统
-        self.pattern = None
-
         # 系统错误码
         self.errcode = None
 
-    def load_recorder(self, application_log_path, system_log_path=None, logging_setting_path=None, logging_setting=None,
-                      application_level='DEBUG', system_level='DEBUG'):
+    def load_recorder(self, application_log_path=None, system_log_path=None, logging_setting=None,
+                      application_level='DEBUG', system_level='DEBUG', logging_colormap=None):
         """加载日志对象
 
         需要最先加载,因为其他加载都需要使用recorder
+        其他server启动时会默认加载一遍，用户没有特殊需求可以不加载
 
         :parameter:
           - `app_log_path`: 应用日志路径
@@ -52,15 +50,15 @@ class Loader(object):
           - `logging_setting`: 自定以logging配置
           - `application_level`: 应用日志输出级别
           - `system_level`: 系统日志输出级别
+          - `logging_colormap`: 输出日志颜色
         """
 
-        # TODO:配色自定义
         if not logging_setting:
             from fastweb.setting.default_logging import DEFAULT_LOGGING_SETTING
             logging_setting = DEFAULT_LOGGING_SETTING
 
-        logging_setting['handlers']['application_file_time_handler']['filename'] = application_log_path
-        logging_setting['handlers']['system_file_size_handler']['filename'] = system_log_path if system_log_path else application_log_path
+        logging_setting['handlers']['application_file_time_handler']['filename'] = application_log_path if application_log_path else DEFAULT_APP_LOG_PATH
+        logging_setting['handlers']['system_file_size_handler']['filename'] = system_log_path if system_log_path else DEFAULT_SYS_LOG_PATH
 
         if application_level:
             check_logging_level(application_level)
@@ -75,22 +73,21 @@ class Loader(object):
         self.system_recorder = getLogger('system_recorder')
         self.application_recorder = getLogger('application_recorder')
 
+        if logging_colormap:
+            set_record_color(logging_colormap)
+
         recorder('INFO',
                  'load recorder configuration\n{conf}\n\napplication log: {app_path} [{app_level}]\nsystem log: {sys_path} [{sys_level}]'.format(
-                     conf=json.dumps(logging_setting, indent=4), app_path=application_log_path,
-                     app_level=application_level, sys_path=system_log_path, sys_level=system_level))
+                  conf=json.dumps(logging_setting, indent=4), app_path=application_log_path,
+                  app_level=application_level, sys_path=system_log_path, sys_level=system_level))
 
     def load_configuration(self, backend='ini', **setting):
-        """加载配置文件,组件配置文件
+        """加载配置文件
 
         :parameter:
           - `backend`: 配置方式,目前支持ini
           - `setting`: 该格式需要的设置参数
         """
-
-        if not self.system_recorder and not self.application_recorder:
-            recorder('CRITICAL', 'please load recorder first!')
-            raise FastwebException
 
         self.configer = Configuration(backend, **setting)
         self.configs = self.configer.configs
@@ -98,28 +95,27 @@ class Loader(object):
         recorder('INFO', 'load configuration\nbackend:\t{backend}\nsetting:\t{setting}'.format(backend=backend,
                                                                                                setting=setting))
 
-    def load_component(self, pattern, backend='ini', **setting):
+    @staticmethod
+    def load_component(layout, backend='ini', **setting):
         """加载组件管理器
 
-        需要在load_configuration后进行
+        可以进行多次加载
 
         :parameter:
-          - `pattern`:同步或异步模式,SyncPattern或者AsynPattern
+          - `layout`: 当前调用的层次，web, service, task
+          - `backend`: 配置方式,目前支持ini
+          - `setting`: 该格式需要的设置参数
         """
 
-        if not self.system_recorder and not self.application_recorder:
-            recorder('CRITICAL', 'please load recorder first!')
-            raise FastwebException
-
-        self.pattern = pattern
+        layout = layout.lower()
         configer = Configuration(backend, **setting)
 
         # 加载需要管理连接池的组件
         recorder('INFO', 'load connection component start')
         with timing('ms', 10) as t:
-            if pattern is SyncPattern:
+            if layout in ('service', 'task'):
                 fastweb.manager.SyncConnManager.setup(configer)
-            elif pattern is AsynPattern:
+            elif layout in ('web',):
                 fastweb.manager.AsynConnManager.configer = configer
                 ioloop.IOLoop.current().run_sync(fastweb.manager.AsynConnManager.setup)
         recorder('INFO', 'load connection component successful -- {time}'.format(time=t))
@@ -129,6 +125,7 @@ class Loader(object):
         with timing('ms', 10) as t:
             fastweb.manager.Manager.setup(configer)
         recorder('INFO', 'load component successful -- {time}'.format(time=t))
+        return configer
 
     def load_errcode(self, errcode=None):
         """加载系统错误码

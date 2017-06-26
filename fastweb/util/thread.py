@@ -17,7 +17,7 @@ class FThread(Thread):
          - `name`: 线程名
          - `task`: 任务函数,线程名会作为参数传递给task
          - `period`: 执行时间间隔
-         - `count`： 执行次数，-1为永远执行，默认为永远执行
+         - `frequency`： 执行次数，-1为永远执行，默认为永远执行
         """
 
         self._event = Event()

@@ -11,7 +11,7 @@ from accesspoint import coroutine, ioloop, Return
 from fastweb.util.log import recorder
 from fastweb.util.thread import FThread
 
-DEFAULT_TIMEOUT = 80000
+DEFAULT_TIMEOUT = 50000
 DEFAULT_MAXCONN = 500
 
 
@@ -35,7 +35,6 @@ class ConnectionPool(object):
         self._pool = Queue()
         self._name = name
         self._size = int(size)
-        self._pattern = None
         self._timeout = int(awake) if awake else DEFAULT_TIMEOUT
         self._setting = setting
         self._used_pool = []
@@ -104,7 +103,7 @@ class SyncConnectionPool(ConnectionPool):
         recorder('DEBUG', 'synchronize connection pool create successful <{name}>'.format(name=self._name))
 
     def rescue(self):
-        self._rescue_thread = FThread(name='rescue', task=self._rescue, period=self._timeout)
+        self._rescue_thread = FThread(name='rescue', task=self._rescue, period=self._timeout, frequency=-1)
         self._rescue_thread.start()
 
     def _rescue(self, thread):
@@ -196,7 +195,7 @@ class AsynConnectionPool(ConnectionPool):
         scale_loop.start()
 
     def scale_connections(self):
-        scale_thread = FThread(name='scale', task=self._scale)
+        scale_thread = FThread(name='scale', task=self._scale, frequency=-1)
         scale_thread.start()
         scale_thread.join()
 

@@ -29,6 +29,7 @@ class Components(object):
         self.loader = fastweb.loader.app
         self.errcode = fastweb.loader.app.errcode
         self.configs = fastweb.loader.app.configs
+        self.requestid = self.gen_requestid()
 
         # 组件缓冲池,确保同一请求对同一组件只获取一次
         self._components = {}

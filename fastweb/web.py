@@ -12,6 +12,7 @@ import subprocess
 from fastweb.accesspoint import (web, coroutine, Task, Return, options,
                                  AsyncHTTPClient, HTTPError, Subprocess, httpserver, ioloop, HTTPRequest, run_on_executor)
 
+from fastweb import app
 import fastweb.components
 from fastweb.util.tool import timing
 from fastweb.util.log import recorder
@@ -309,7 +310,7 @@ def arguments(convert=None, **ckargs):
 
 def start_web_server(port, handlers, **settings):
     """启动服务器"""
-
+    app.load_recorder()
     application = web.Application(
         handlers,
         **settings

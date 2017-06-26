@@ -2,16 +2,13 @@
 
 """Mysql模块"""
 
-import pymysql
-import tornado_mysql
-
-from fastweb.accesspoint import iostream
-from fastweb.accesspoint import coroutine, Return
 
 import fastweb.util.tool as tool
 from fastweb.component import Component
 from fastweb.exception import MysqlError
 from fastweb.util.tool import Retry, RetryPolicy
+from fastweb.accesspoint import iostream, pymysql, tornado_mysql, coroutine, Return
+
 
 DEFAULT_PORT = 3306
 DEFAULT_TIMEOUT = 5
@@ -304,7 +301,7 @@ class AsynMysql(Mysql):
             self.recorder('INFO', '{obj} connect start'.format(obj=self))
             self._conn = yield tornado_mysql.connect(**self.setting)
             self.recorder('INFO', '{obj} connect successful ({threadid})'.format(obj=self, threadid=self._conn.server_thread_id[0]))
-        except tornado_mysql.Error as e:
+        except (tornado_mysql.Error, tornado_mysql.OperationalError) as e:
             self.recorder('ERROR', '{obj} connect error [{msg}]'.format(obj=self, msg=e))
             raise MysqlError
 

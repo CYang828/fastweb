@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 
-version = '1.4.1.5'
+version = '1.4.1.6'
 
 with open('README.rst') as f:
         kwargs['long_description'] = f.read()
@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'fasthrift = fastweb.command.service.thrift:gen_thrift_auxiliary',
+            'fast = fastweb.command.fast:main'
         ],
     },
     author='Bslience',

@@ -17,4 +17,7 @@ autopep8
 subprocess32
 docopt
 ply
+pytest
+
+
 
