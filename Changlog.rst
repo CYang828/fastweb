@@ -1,3 +1,6 @@
+Version 1.4.1.8:
+    fix: Redis组件没有ping和reconnect
+
 
 Version 1.4.1.7:
     fix: 修复redis组件

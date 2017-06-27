@@ -45,6 +45,12 @@ class Redis(Component):
         else:
             return response
 
+    def reconnect(self):
+        pass
+
+    def ping(self):
+        pass
+
 
 class SyncRedis(Redis):
     """同步redis
@@ -65,9 +71,6 @@ class SyncRedis(Redis):
             self.recorder('ERROR', '{obj} connect failed [{msg}]'.format(obj=self, msg=e))
             raise RedisError
         return self
-
-    def reconnect(self):
-        pass
 
     def query(self, command):
         """命令行操作
@@ -113,9 +116,6 @@ class AsynRedis(Redis):
             self.recorder('ERROR', '{obj} connect failed [{msg}]'.format(obj=self, msg=e))
             raise RedisError
         raise Return(self)
-
-    def reconnect(self):
-        pass
 
     @coroutine
     def query(self, command):
