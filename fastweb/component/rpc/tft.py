@@ -37,11 +37,6 @@ class TftRpc(Component):
 class SyncTftRpc(TftRpc):
     """Thrift Rpc同步组件"""
 
-    def __init__(self, **kwargs):
-        super(SyncTftRpc, self).__init__(**kwargs)
-
-        self.isConnect = False
-
     def __str__(self):
         return '<SyncThriftRpc {name} {host} {port} {module_path} {module}>'.format(
             host=self.host,

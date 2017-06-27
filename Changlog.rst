@@ -1,3 +1,7 @@
+Version 1.4.1.11:
+    add: Api和Page异常时console日志打印
+
+
 Version 1.4.1.9:
     fix: Mysql同步查询无返回
 

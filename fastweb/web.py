@@ -15,9 +15,9 @@ from fastweb.accesspoint import (web, coroutine, Task, Return, options,
 from fastweb import app
 import fastweb.components
 from fastweb.util.tool import timing
-from fastweb.util.log import recorder
 from fastweb.util.thread import FThread
 from fastweb.util.python import to_plain
+from fastweb.util.log import recorder, console_recorder
 from fastweb.exception import HttpError, SubProcessError
 
 
@@ -167,6 +167,8 @@ class Api(web.RequestHandler, AsynComponents):
     def log_exception(self, typ, value, tb):
         """日志记录异常,并自动返回系统错误"""
 
+        console_recorder('ERROR', '{message}'.format(
+            message=traceback.format_exc()))
         self.recorder('ERROR', '{message}'.format(
             message=traceback.format_exc()))
         self.end('SVR')
@@ -235,7 +237,9 @@ class Page(web.RequestHandler, AsynComponents):
     def log_exception(self, typ, value, tb):
         """日志记录异常"""
 
-        self.recorder('error', '{message}'.format(
+        console_recorder('ERROR', '{message}'.format(
+            message=traceback.format_exc()))
+        self.recorder('ERROR', '{message}'.format(
             message=traceback.format_exc()))
 
     def end(self, template=None, log=True, **kwargs):

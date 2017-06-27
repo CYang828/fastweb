@@ -15,11 +15,26 @@ from fastweb.components import SyncComponents
 from fastweb.accesspoint import CeleryTask, Celery, Ignore, Queue, Exchange, coroutine, Return
 
 
-__all__ = ['start_task_worker']
+__all__ = ['start_task_worker', 'Worker']
 DEFAULT_TIMEOUT = 5
 
 
-class Task(Component, CeleryTask, SyncComponents):
+class Worker(SyncComponents):
+
+    def __init__(self):
+        super(Worker, self).__init__()
+
+    def run(self):
+        raise NotImplementedError
+
+    def on_success(self, retval, task_id, args, kwargs):
+        pass
+
+    def after_return(self, status, retval, task_id, args, kwargs, einfo):
+        pass
+
+
+class Task(Component, CeleryTask):
     """任务类"""
 
     eattr = {'task_class': str, 'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
@@ -29,7 +44,7 @@ class Task(Component, CeleryTask, SyncComponents):
         """初始化任务"""
 
         Component.__init__(self, setting)
-        SyncComponents.__init__(self)
+        CeleryTask.__init__(self)
 
         # 设置任务的属性
         self.name = setting['_name']
@@ -65,7 +80,9 @@ class Task(Component, CeleryTask, SyncComponents):
         """任务处理
         转发给具体执行对象的run方法"""
 
-        return self._task_obj.run(*args, **kwargs)
+        ret = self._task_obj.run(*args, **kwargs)
+        self.release()
+        return ret
 
     def on_success(self, retval, task_id, args, kwargs):
         """
@@ -145,7 +162,7 @@ class Task(Component, CeleryTask, SyncComponents):
         """
 
         if hasattr(self._task_obj, 'after_return'):
-            self._task_obj.on_retry(status, retval, task_id, args, kwargs, einfo)
+            self._task_obj.after_return(status, retval, task_id, args, kwargs, einfo)
 
     @coroutine
     def call_async(self, *args, **kwargs):
