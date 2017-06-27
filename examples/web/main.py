@@ -4,7 +4,6 @@
 
 from fastweb.web import options, start_web_server
 from fastweb.loader import app
-from fastweb.pattern import  SyncPattern, AsynPattern
 
 options.define('port',default = 6666,help = 'this is default port',type = int)
 options.define('config',default = 'config.ini',help = 'this is default config path',type = str)
@@ -15,8 +14,8 @@ if __name__ == '__main__':
     app.load_recorder('app.log', system_level='DEBUG')
     app.load_configuration(backend='ini', path=options.config)
     app.load_errcode()
-    app.load_component(pattern=AsynPattern, backend='ini', path=options.config)
-    app.load_component(pattern=AsynPattern, backend='ini', path='task.ini')
+    app.load_component(layout='web', backend='ini', path=options.config)
+    app.load_component(layout='web', backend='ini', path='task.ini')
 
     from handlers.test import Test, ZohoOffice
 

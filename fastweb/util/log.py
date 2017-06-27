@@ -59,7 +59,13 @@ def recorder(level, msg):
     record(level, msg, rec)
 
 
+def console_recorder(level, msg):
+    """打印终端日志"""
+    record(level, msg)
+
+
 def set_record_color(colormap):
+    """设置日志颜色"""
     global COLORMAP
     if colormap.keys() in LOGGING_LEVEL:
         COLORMAP = colormap
@@ -67,7 +73,7 @@ def set_record_color(colormap):
         recorder('CRITICAL', 'colormap invalid, please fill it like {colormap}'.format(colormap=str(COLORMAP)))
 
 
-def record(level, msg, r, extra=None):
+def record(level, msg, r=None, extra=None):
     global COLORMAP
     level = level.upper()
     check_logging_level(level)
@@ -76,8 +82,12 @@ def record(level, msg, r, extra=None):
         msg = '{msg}\n\n{exeinfo}'.format(msg=msg, exeinfo=traceback.format_exc(), whole=4)
 
     logger_color = COLORMAP.get(level, 'white')
-    logger_func = getattr(r, level.lower())
-    logger_func(colored(msg, logger_color, attrs=['bold']), extra=extra)
+
+    if r:
+        logger_func = getattr(r,  'info' if level.lower() == 'important' else level.lower())
+        logger_func(colored(msg, logger_color, attrs=['bold']), extra=extra)
+    else:
+        print(colored(msg, logger_color, attrs=['bold']))
 
 
 def check_logging_level(level):
@@ -88,5 +98,5 @@ def check_logging_level(level):
 
     if level not in LOGGING_LEVEL:
         recorder('CRITICAL', 'please check logging level! right options {levels}, current level is {level}'.format(level=level,
-                                                                                                                    levels=str(LOGGING_LEVEL)))
+                                                                                                                   levels=str(LOGGING_LEVEL)))
         raise ParameterError

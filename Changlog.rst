@@ -1,4 +1,7 @@
 
+Version 1.4.1.7:
+    fix: 修复redis组件
+
 
 Version 1.4.1.6：
     add: 增加fastcelery脚本工具

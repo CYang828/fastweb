@@ -27,10 +27,10 @@ class Test(Api):
         #for _ in xrange(1):
             #yield self.hello_service.sayHello()
 
-        #yield self.test_redis.call('set', 'name', 'jackson')
+        yield self.test_redis.query('set name jackson')
 
-        ret = yield self.hello_service.sayHello()
-        print ret
+        # ret = yield self.hello_service.sayHello()
+        # print ret
         #ret = yield self.http_client.fetch('http://www.baidu.com')
         request = Request(method='GET', url='http://www.baidu.com')
         ret = yield self.http_request(request)

@@ -16,10 +16,11 @@ import os
 import re
 
 from fastweb import app
-from fastweb.util.log import recorder
 from fastweb.accesspoint import docopt
+from fastweb.util.tool import HistoryConsole
 from fastweb.components import SyncComponents
 from fastweb.exception import FastwebException
+from fastweb.util.log import console_recorder, colored
 
 
 def main():
@@ -32,13 +33,12 @@ def main():
     configpath = os.path.join(cwd, configpath)
     app.load_component(layout='service', backend='ini', path=configpath)
     components = SyncComponents()
-    print("[Fast command]\nyou can call any component like in fastweb")
+    console_recorder('DEBUG', "[Fast command]\nyou can call any component like in fastweb")
     argexp = re.compile(r'(.*)\((.*)\)')
-    history = []
+    console = HistoryConsole()
 
     while True:
-        c = raw_input('>>> ')
-        history.append(c)
+        c = console.raw_input(colored('>>> ', 'cyan'))
 
         if c in ('quit', 'quit()', 'exit', 'exit()'):
             break
@@ -46,7 +46,7 @@ def main():
             cplit = c.split('.')
 
             if cplit[0] != 'self':
-                print('error, please use `self` first!')
+                console_recorder('ERROR', 'error, please use `self` first!')
                 continue
 
             try:
@@ -67,10 +67,10 @@ def main():
                         else:
                             print(getattr(com, func)())
                     else:
-                        print('error! please input function!')
+                        console_recorder('ERROR', 'error! please input function!')
                         continue
             except FastwebException as e:
-                print('error! {e}'.format(e=e))
+                console_recorder('ERROR', 'error! {e}'.format(e=e))
                 continue
 
 

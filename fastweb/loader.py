@@ -36,7 +36,10 @@ class Loader(object):
         # 系统错误码
         self.errcode = None
 
-    def load_recorder(self, application_log_path=None, system_log_path=None, logging_setting=None,
+        # 日志是否被设置过
+        self.bRecorder = False
+
+    def load_recorder(self, application_log_path=DEFAULT_APP_LOG_PATH, system_log_path=DEFAULT_SYS_LOG_PATH, logging_setting=None,
                       application_level='DEBUG', system_level='DEBUG', logging_colormap=None):
         """加载日志对象
 
@@ -44,7 +47,7 @@ class Loader(object):
         其他server启动时会默认加载一遍，用户没有特殊需求可以不加载
 
         :parameter:
-          - `app_log_path`: 应用日志路径
+          - `application_log_path`: 应用日志路径
           - `system_log_path`: 系统日志路径,默认系统日志路径和应用日志路径相同
           - `logging_setting_path`: 默认从fastweb.settting.default_logging.yaml获取配置,可以指定为自定义的日志配置,必须有application_recorder和system_recorder
           - `logging_setting`: 自定以logging配置
@@ -57,8 +60,8 @@ class Loader(object):
             from fastweb.setting.default_logging import DEFAULT_LOGGING_SETTING
             logging_setting = DEFAULT_LOGGING_SETTING
 
-        logging_setting['handlers']['application_file_time_handler']['filename'] = application_log_path if application_log_path else DEFAULT_APP_LOG_PATH
-        logging_setting['handlers']['system_file_size_handler']['filename'] = system_log_path if system_log_path else DEFAULT_SYS_LOG_PATH
+        logging_setting['handlers']['application_file_time_handler']['filename'] = application_log_path
+        logging_setting['handlers']['system_file_size_handler']['filename'] = system_log_path
 
         if application_level:
             check_logging_level(application_level)
@@ -76,6 +79,7 @@ class Loader(object):
         if logging_colormap:
             set_record_color(logging_colormap)
 
+        self.bRecorder = True
         recorder('INFO',
                  'load recorder configuration\n{conf}\n\napplication log: {app_path} [{app_level}]\nsystem log: {sys_path} [{sys_level}]'.format(
                   conf=json.dumps(logging_setting, indent=4), app_path=application_log_path,

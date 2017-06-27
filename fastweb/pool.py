@@ -12,7 +12,7 @@ from fastweb.util.log import recorder
 from fastweb.util.thread import FThread
 
 DEFAULT_TIMEOUT = 50000
-DEFAULT_MAXCONN = 500
+DEFAULT_MAXCONN = 100
 
 
 class ConnectionPool(object):
@@ -32,7 +32,6 @@ class ConnectionPool(object):
         """
 
         self._cls = cls
-        self._pool = Queue()
         self._name = name
         self._size = int(size)
         self._timeout = int(awake) if awake else DEFAULT_TIMEOUT
@@ -40,6 +39,7 @@ class ConnectionPool(object):
         self._used_pool = []
         self._unused_pool = []
         self._maxconnections = int(maxconnections) if maxconnections else DEFAULT_MAXCONN
+        self._pool = Queue(self._maxconnections)
         self._lock = threading.Lock()
         self._rescue_thread = None
 
@@ -65,7 +65,8 @@ class ConnectionPool(object):
         self._unused_pool.append(connection)
         self._pool.put_nowait(connection)
         recorder('DEBUG',
-                 '<{name}> return connection {conn}, total connections {count}'.format(name=self._name, conn=connection,
+                 '<{name}> return connection {conn}, total connections {count}'.format(name=self._name,
+                                                                                       conn=connection,
                                                                                        count=self._pool.qsize()))
 
     def rescue(self):

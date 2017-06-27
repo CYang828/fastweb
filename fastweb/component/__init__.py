@@ -38,7 +38,7 @@ class Component(object):
           - `setting`:构造组件参数
         """
 
-        self.name = None
+        self.name = ''
         # 存储原始的参数
         self._setting = setting
         # 存储转换后的参数

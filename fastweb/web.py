@@ -310,7 +310,9 @@ def arguments(convert=None, **ckargs):
 
 def start_web_server(port, handlers, **settings):
     """启动服务器"""
-    app.load_recorder()
+    if not app.bRecorder:
+        app.load_recorder()
+
     application = web.Application(
         handlers,
         **settings
