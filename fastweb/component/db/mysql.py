@@ -221,7 +221,7 @@ class SyncMysql(Mysql):
 
         # 执行过程中的重试,只重试一次
         mysql_retry_policy = RetryPolicy(times=1, error=MysqlError)
-        Retry(self, '{obj}'.format(obj=self), self._query, sql, mysql_retry_policy, args).run_sync()
+        return Retry(self, '{obj}'.format(obj=self), self._query, sql, mysql_retry_policy, args).run_sync()
 
     def _query(self, sql, retry, args):
 

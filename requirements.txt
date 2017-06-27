@@ -18,6 +18,8 @@ subprocess32
 docopt
 ply
 pytest
+readline
+
 
 
 
