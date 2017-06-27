@@ -1,5 +1,6 @@
 Version 1.4.1.11:
     add: Api和Page异常时console日志打印
+    fix: AsynThrift修复
 
 
 Version 1.4.1.9:
