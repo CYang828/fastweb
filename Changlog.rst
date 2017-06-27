@@ -1,3 +1,7 @@
+Version 1.4.1.9:
+    fix: Mysql同步查询无返回
+
+
 Version 1.4.1.8:
     fix: Redis组件没有ping和reconnect
 

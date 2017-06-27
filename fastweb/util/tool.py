@@ -90,7 +90,7 @@ class Retry(object):
         """运行重试机制"""
 
         try:
-            self._func(*self._args, **self._kwargs)
+            return self._func(*self._args, **self._kwargs)
         except RetryPolicy as e:
             if e.retry < e.times:
                 delay = e.interval * e.retry + e.delay
@@ -99,7 +99,7 @@ class Retry(object):
                 if delay:
                     Timer(delay, self.run).start()
                 else:
-                    self.run_sync()
+                    return self.run_sync()
             else:
                 self._obj.recorder('ERROR', '{name} retry error raise {exc}'.format(name=self._name, exc=e.error))
                 raise e.error
