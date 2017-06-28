@@ -21,7 +21,7 @@ from celery import Task as CeleryTask, platforms, Celery, task, states
 from thrift.server import TServer
 from thrift.transport import TSocket
 from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
+from thrift.protocol import TBinaryProtocol, TCompactProtocol
 
 from subprocess32 import Popen
 

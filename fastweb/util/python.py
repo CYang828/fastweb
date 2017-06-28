@@ -107,10 +107,10 @@ class AsynProxyCall(object):
     def __call__(self, *arg, **kwargs):
         self._arg = arg
         self._kwargs = kwargs
-        self.proxy.recorder('INFO', 'call {proxy} <{method}> start')
+        self.proxy.recorder('INFO', 'call {proxy} <{method}> start'.format(proxy=self.proxy, method=self._method))
         try:
             with fastweb.util.tool.timing('ms', 8) as t:
-                ret = yield getattr(self.proxy._other, self._method)(*arg, **kwargs)
+                ret = yield getattr(self.proxy.other, self._method)(*arg, **kwargs)
             self.proxy.recorder('INFO', 'call {proxy} <{method}> successful\n{ret} <{time}>'.format(proxy=self.proxy,
                                                                                                     method=self._method,
                                                                                                     ret=ret,

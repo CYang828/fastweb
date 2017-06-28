@@ -3,7 +3,7 @@
 #
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
-#  options string: py:tornado
+#  options string: py
 #
 
 from thrift.Thrift import TType, TMessageType, TFrozenDict, TException, TApplicationException
@@ -13,8 +13,6 @@ import logging
 from .ttypes import *
 from thrift.Thrift import TProcessor
 from thrift.transport import TTransport
-from tornado import gen
-from tornado import concurrent
 
 
 class Iface(object):
@@ -30,55 +28,26 @@ class Iface(object):
 
 
 class Client(Iface):
-    def __init__(self, transport, iprot_factory, oprot_factory=None):
-        self._transport = transport
-        self._iprot_factory = iprot_factory
-        self._oprot_factory = (oprot_factory if oprot_factory is not None
-                               else iprot_factory)
+    def __init__(self, iprot, oprot=None):
+        self._iprot = self._oprot = iprot
+        if oprot is not None:
+            self._oprot = oprot
         self._seqid = 0
-        self._reqs = {}
-        self._transport.io_loop.spawn_callback(self._start_receiving)
-
-    @gen.engine
-    def _start_receiving(self):
-        while True:
-            try:
-                frame = yield self._transport.readFrame()
-            except TTransport.TTransportException as e:
-                for future in self._reqs.values():
-                    future.set_exception(e)
-                self._reqs = {}
-                return
-            tr = TTransport.TMemoryBuffer(frame)
-            iprot = self._iprot_factory.getProtocol(tr)
-            (fname, mtype, rseqid) = iprot.readMessageBegin()
-            method = getattr(self, 'recv_' + fname)
-            future = self._reqs.pop(rseqid, None)
-            if not future:
-                # future has already been discarded
-                continue
-            try:
-                result = method(iprot, mtype, rseqid)
-            except Exception as e:
-                future.set_exception(e)
-            else:
-                future.set_result(result)
 
     def sayHello(self):
-        self._seqid += 1
-        future = self._reqs[self._seqid] = concurrent.Future()
         self.send_sayHello()
-        return future
+        return self.recv_sayHello()
 
     def send_sayHello(self):
-        oprot = self._oprot_factory.getProtocol(self._transport)
-        oprot.writeMessageBegin('sayHello', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin('sayHello', TMessageType.CALL, self._seqid)
         args = sayHello_args()
-        args.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
 
-    def recv_sayHello(self, iprot, mtype, rseqid):
+    def recv_sayHello(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
             x = TApplicationException()
             x.read(iprot)
@@ -96,21 +65,20 @@ class Client(Iface):
         Parameters:
          - input
         """
-        self._seqid += 1
-        future = self._reqs[self._seqid] = concurrent.Future()
         self.send_getData(input)
-        return future
+        return self.recv_getData()
 
     def send_getData(self, input):
-        oprot = self._oprot_factory.getProtocol(self._transport)
-        oprot.writeMessageBegin('getData', TMessageType.CALL, self._seqid)
+        self._oprot.writeMessageBegin('getData', TMessageType.CALL, self._seqid)
         args = getData_args()
         args.input = input
-        args.write(oprot)
-        oprot.writeMessageEnd()
-        oprot.trans.flush()
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
 
-    def recv_getData(self, iprot, mtype, rseqid):
+    def recv_getData(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
             x = TApplicationException()
             x.read(iprot)
@@ -143,28 +111,43 @@ class Processor(Iface, TProcessor):
             oprot.trans.flush()
             return
         else:
-            return self._processMap[name](self, seqid, iprot, oprot)
+            self._processMap[name](self, seqid, iprot, oprot)
+        return True
 
-    @gen.coroutine
     def process_sayHello(self, seqid, iprot, oprot):
         args = sayHello_args()
         args.read(iprot)
         iprot.readMessageEnd()
         result = sayHello_result()
-        result.success = yield gen.maybe_future(self._handler.sayHello())
-        oprot.writeMessageBegin("sayHello", TMessageType.REPLY, seqid)
+        try:
+            result.success = self._handler.sayHello()
+            msg_type = TMessageType.REPLY
+        except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
+            raise
+        except Exception as ex:
+            msg_type = TMessageType.EXCEPTION
+            logging.exception(ex)
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("sayHello", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
 
-    @gen.coroutine
     def process_getData(self, seqid, iprot, oprot):
         args = getData_args()
         args.read(iprot)
         iprot.readMessageEnd()
         result = getData_result()
-        result.success = yield gen.maybe_future(self._handler.getData(args.input))
-        oprot.writeMessageBegin("getData", TMessageType.REPLY, seqid)
+        try:
+            result.success = self._handler.getData(args.input)
+            msg_type = TMessageType.REPLY
+        except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
+            raise
+        except Exception as ex:
+            msg_type = TMessageType.EXCEPTION
+            logging.exception(ex)
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("getData", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()

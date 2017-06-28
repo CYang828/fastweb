@@ -1,3 +1,7 @@
+Version 1.4.1.12
+    fix: 修复thrift同步异步客户端与server连接正常
+
+
 Version 1.4.1.11:
     add: Api和Page异常时console日志打印
     fix: AsynThrift修复

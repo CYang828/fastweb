@@ -1,17 +1,31 @@
 # coding:utf8
 
+import os
 import six
-from importlib import import_module
 
 from thrift import TTornado
+from thrift.protocol import TCompactProtocol
 from thrift.transport import TTransport, TSocket
-from thrift.protocol import TBinaryProtocol
 from fastweb.accesspoint import coroutine, Return
 
 from fastweb.util.log import recorder
 from fastweb.component import Component
 from fastweb.exception import RpcError, ConfigurationError
 from fastweb.util.python import AsynProxyCall, ExceptionProcessor, load_module
+
+
+"""
+关于Thrift
+
+TftRpc是Thrift客户端的实现，fastweb.service.Service是Thrift服务端的实现
+
+关于Transport:
+    Thrift官方实现了多种Transport，目前我们选用的TFrameTransport，主要是为了兼容异步的连接，Thrift的异步链接必须使用TFrameTransport
+    
+关于Protocal:
+    Thrift官方实现了多种Protocal，目前选择的是TCompactProtocol，一种压缩的高性能二进制编码，这种传输方式类似于ProtocolBuffer，性能会
+    比TBinaryProtocol高
+"""
 
 
 class TftRpc(Component):
@@ -21,11 +35,14 @@ class TftRpc(Component):
     def __init__(self, setting):
         super(TftRpc, self).__init__(setting)
 
-        self.isConnect = False
         self._client = None
-        self._module = None
         self._transport = None
-        self._other = None
+        self.other = None
+
+        # 将用户启动的路径加入sys.path，用户普遍理解路径都是从当前目录进行理解
+        import sys
+        sys.path.append(os.getcwd())
+        del sys
 
     def connect(self):
         raise NotImplementedError
@@ -38,28 +55,33 @@ class SyncTftRpc(TftRpc):
     """Thrift Rpc同步组件"""
 
     def __str__(self):
-        return '<SyncThriftRpc {name} {host} {port} {module_path} {module}>'.format(
+        return '<SyncThriftRpc {name} {host} {port} {module}>'.format(
             host=self.host,
             port=self.port,
-            module_path=self.thrift_module_path,
             module=self.thrift_module,
             name=self.name)
 
     def connect(self):
-        if isinstance(self.module, six.string_types):
-            module = import_module(self.module)
+        if isinstance(self.thrift_module, six.string_types):
+            module = load_module(self.thrift_module)
         else:
-            self.recorder('ERROR', '{obj} module [{module}] error'.format(obj=self, module=self.module))
+            self.recorder('ERROR', '{obj} module [{module}] load error'.format(obj=self,
+                                                                               module=self.thrift_module))
             raise ConfigurationError
 
         try:
-            transport = TSocket.TSocket(self.setting['host'], self.setting['port'])
-            self._transport = TTransport.TBufferedTransport(transport)
-            protocol = TBinaryProtocol.TBinaryProtocol(transport)
-            self._transport.open()
+            self.recorder('INFO', '{obj} connect start'.format(obj=self))
+            self._transport = TSocket.TSocket(self.host, self.port)
+            self._transport = TTransport.TFramedTransport(self._transport)
+            protocol = TCompactProtocol.TCompactProtocol(self._transport)
             self._client = getattr(module, 'Client')(protocol)
-        except:
+            self._transport.open()
+            self.recorder('INFO', '{obj} connect successful'.format(obj=self))
+        except TTransport.TTransportException as e:
+            self.recorder('ERROR', '{obj} connect error ({e})'.format(obj=self, e=e)) if self.recorder else recorder('ERROR', '{obj} connect error ({e})'.format(obj=self, e=ex))
             raise RpcError
+
+        return self
 
     def reconnect(self):
         pass
@@ -69,7 +91,7 @@ class SyncTftRpc(TftRpc):
             return getattr(self._client, name)
 
     def close(self):
-        self.transport.close()
+        self._transport.close()
 
 
 class AsynTftRpc(TftRpc):
@@ -87,25 +109,24 @@ class AsynTftRpc(TftRpc):
         """建立连接"""
 
         if isinstance(self.thrift_module, six.string_types):
-            self._module = load_module(self.thrift_module)
+            module = load_module(self.thrift_module)
 
         self.recorder('INFO', '{obj} connect start'.format(obj=self))
-        self._transport = TTornado.TTornadoStreamTransport(self.setting['host'], self.setting['port'])
+        self._transport = TTornado.TTornadoStreamTransport(self.host, self.port)
         yield self._connect()
-        self.set_idle()
-        self.isConnect = True
         self.recorder('INFO', '{obj} connect successful'.format(obj=self))
-        protocol = TBinaryProtocol.TBinaryProtocolFactory()
-        self._client = getattr(self._module, 'Client')(self._transport, protocol)
-        self._other = self._client
+        protocol = TCompactProtocol.TCompactProtocolFactory()
+        self._client = getattr(module, 'Client')(self._transport, protocol)
+        self.recorder('DEBUG', module)
+        self.other = self._client
         raise Return(self)
 
     @coroutine
     def _connect(self):
         try:
             yield self._transport.open()
-        except TTransport.TTransportException as ex:
-            self.recorder('ERROR', '{obj} connect error ({e})'.format(obj=self, e=ex)) if self.recorder else recorder('ERROR', '{obj} connect error ({e})'.format(obj=self, e=ex))
+        except TTransport.TTransportException as e:
+            self.recorder('ERROR', '{obj} connect error ({e})'.format(obj=self, e=e)) if self.recorder else recorder('ERROR', '{obj} connect error ({e})'.format(obj=self, e=ex))
             raise RpcError
 
     def reconnect(self):
@@ -123,6 +144,4 @@ class AsynTftRpc(TftRpc):
 
     def close(self):
         """关闭连接"""
-
-        if self.transport:
-            self.transport.close()
+        self._transport.close()

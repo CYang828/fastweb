@@ -36,6 +36,7 @@ def setup_logging(setting):
       - `setting`:配置"""
 
     global bSetupLogging
+    logging.basicConfig(level=logging.DEBUG)
     logging.config.dictConfig(setting)
     bSetupLogging = True
 

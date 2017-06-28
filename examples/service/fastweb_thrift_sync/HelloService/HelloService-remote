@@ -4,7 +4,7 @@
 #
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
-#  options string: py:tornado
+#  options string: py
 #
 
 import sys
@@ -16,8 +16,8 @@ else:
 from thrift.transport import TTransport, TSocket, TSSLSocket, THttpClient
 from thrift.protocol.TBinaryProtocol import TBinaryProtocol
 
-from secondService import HelloService
-from secondService.ttypes import *
+from HelloService import HelloService
+from HelloService.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
@@ -25,7 +25,6 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('')
     print('Functions:')
     print('  string sayHello()')
-    print('  string getData(string input)')
     print('')
     sys.exit(0)
 
@@ -110,12 +109,6 @@ if cmd == 'sayHello':
         print('sayHello requires 0 args')
         sys.exit(1)
     pp.pprint(client.sayHello())
-
-elif cmd == 'getData':
-    if len(args) != 1:
-        print('getData requires 1 args')
-        sys.exit(1)
-    pp.pprint(client.getData(args[0],))
 
 else:
     print('Unrecognized method %s' % cmd)
