@@ -23,6 +23,11 @@ class SubProcessError(ComponentError):
     pass
 
 
+class SubProcessTimeoutError(ComponentError):
+    """子进程调用超时错误"""
+    pass
+
+
 class MysqlError(ComponentError):
     """mysql组件错误"""
     pass

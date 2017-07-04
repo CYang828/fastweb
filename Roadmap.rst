@@ -11,6 +11,8 @@
 17 service层的handler只加载对外开放的函数，其他不加载，加载service时可以使用thrift idl parse做些工作
 19 log filter，某些场景需要过滤日志级别，比如脚本
 load component + filter
+20 service 进入和出口时打印日志
+21 异步连接池scale机制问题
 
 
 ♦︎ 连接池初始化后，中途mysql连接断开reconnect时增加超时时间，防止请求时长时间不返回
@@ -25,3 +27,4 @@ load component + filter
 ♦ tox集成测试
 
 ♦ pytest替换unittest
+

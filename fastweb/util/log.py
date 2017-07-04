@@ -54,9 +54,8 @@ def recorder(level, msg):
     if not bSetupLogging:
         from fastweb import app
         app.load_recorder()
-        setup_logging(DEFAULT_LOGGING_SETTING)
 
-    rec = fastweb.loader.app.system_recorder if fastweb.loader.app.system_recorder else getLogger('system_recorder')
+    rec = fastweb.loader.app.system_recorder
     record(level, msg, rec)
 
 

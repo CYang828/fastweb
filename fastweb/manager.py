@@ -30,15 +30,27 @@ class Manager(object):
     _pools = {}
     _classified_pools = defaultdict(list)
 
+
+
     @staticmethod
-    def setup(configer):
+    def setup(layout, configer):
         """安装组件"""
 
         recorder('DEBUG', 'default component manager setup start')
         from fastweb.setting.default_component import COMPONENTS
 
+        if layout in ['web']:
+            from fastweb.setting.default_component import ASYN_COMPONENTS
+            components = COMPONENTS + ASYN_COMPONENTS
+        elif layout in ['service', 'task']:
+            from fastweb.setting.default_component import SYNC_COMPONENTS
+            components = COMPONENTS + SYNC_COMPONENTS
+        else:
+            recorder('ERROR', 'layout error {layout}'.format(layout=layout))
+            raise ManagerError
+
         if configer:
-            for (cpre, cls) in COMPONENTS:
+            for (cpre, cls) in components:
                 components = configer.get_components(cpre)
 
                 for name, value in components.items():
@@ -58,7 +70,7 @@ class Manager(object):
         return Manager._classified_pools.get(cpre, [])
 
     @staticmethod
-    def get_component(name, obj):
+    def get_component(name, host):
         """通过manager获取组件
 
         ManagerError:可能是配置文件错误或者程序错误,应该尽快进行处理,不应该再向下继续运行
@@ -71,9 +83,9 @@ class Manager(object):
         if pool:
             if isinstance(pool, ConnectionPool):
                 component = pool.get_connection()
-                component.set_used(obj.recorder)
             else:
                 component = pool
+            component.set_used(host)
             return component
         else:
             recorder('CRITICAL',

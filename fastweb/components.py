@@ -4,15 +4,15 @@
 
 import types
 import shlex
-import subprocess
 from concurrent.futures import ThreadPoolExecutor
 
-import fastweb.loader
 import fastweb.manager
+from fastweb import app
+from fastweb.compat import subprocess
 from fastweb.accesspoint import HTTPClient
-from fastweb.util.tool import uniqueid, timing
-from fastweb.util.log import record, getLogger, recorder
-from fastweb.exception import ComponentError, SubProcessError, HttpError
+from fastweb.util.log import record, recorder
+from fastweb.util.tool import uniqueid, timing, RetryPolicy, Retry
+from fastweb.exception import ComponentError, SubProcessError, SubProcessTimeoutError, HttpError
 
 
 class Components(object):
@@ -66,7 +66,7 @@ class Components(object):
     def gen_requestid():
         """生成requestid"""
 
-        return uniqueid()
+        return str(uniqueid())
 
     def load_executor(self, size):
         """加载当前handler级别的线程池"""
@@ -97,7 +97,7 @@ class Components(object):
           - `msg`:记录信息
         """
 
-        record(level, msg, getLogger('application_recorder'), extra={'requestid': self.requestid})
+        record(level, msg, app.application_recorder, extra={'requestid': self.requestid})
 
     def release(self):
         """释放组件"""
@@ -112,8 +112,16 @@ class Components(object):
 
 class SyncComponents(Components):
     """同步组件类"""
+    
+    def __init__(self):
+        super(SyncComponents, self).__init__()
 
-    def http_request(self, request):
+    def http_request(self, request, timeout=None):
+        http_retry_policy = RetryPolicy(times=request.retry, error=HttpError)
+        request.request_timeout = timeout
+        return Retry(self, '{obj}'.format(obj=self), self._http_request, http_retry_policy, request).run_sync()
+
+    def _http_request(self, retry, request):
         """http请求
 
         :parameter:
@@ -132,12 +140,12 @@ class SyncComponents(Components):
                 response = HTTPClient().fetch(request)
             except HttpError as ex:
                 _recorder('ERROR', 'http request error {request} {e}'.format(request=request, e=ex))
-                raise HttpError
+                raise retry
 
         _recorder('INFO', 'http request successful\n{response} -- {time}'.format(response=response.code, time=t))
         return response
 
-    def call_subprocess(self, command, stdin_data=None):
+    def call_subprocess(self, command, stdin_data=None, timeout=None):
         """命令行调用
 
         :parameter:
@@ -157,16 +165,21 @@ class SyncComponents(Components):
                                            stdout=subprocess.PIPE,
                                            stderr=subprocess.PIPE)
             try:
-                result, error = sub_process.communicate(stdin_data)
+                result, error = sub_process.communicate(stdin_data, timeout=timeout)
             except (OSError, ValueError) as ex:
                 _recorder('ERROR', 'call subprocess\n({cmd}) ({e}) '.format(
                     cmd=command, e=ex, msg=result.strip() if result else error.strip()))
                 raise SubProcessError
+            except subprocess.TimeoutExpired:
+                _recorder('ERROR', 'call subprocess timeout [{timeout}]'.format(timeout=timeout))
+                raise SubProcessTimeoutError
+            finally:
+                sub_process.kill()
 
-        if sub_process.returncode != 0:
-            _recorder('ERROR', 'call subprocess error ({cmd}) <{time}> {msg}'.format(
-                cmd=command, time=t, msg=result.strip() if result else error.strip()))
-            raise SubProcessError
+            if sub_process.returncode != 0:
+                _recorder('ERROR', 'call subprocess error ({cmd}) <{time}> {msg}'.format(
+                          cmd=command, time=t, msg=result.strip() if result else error.strip()))
+                raise SubProcessError
 
         _recorder('INFO', 'call subprocess successful\n{cmd}\n{msg}\n<{time}>'.format(
             cmd=command, time=t, msg=result.strip() if result else error.strip()))

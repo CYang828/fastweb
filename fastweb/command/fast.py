@@ -13,7 +13,6 @@ Options:
 
 
 import os
-import re
 
 from fastweb import app
 from fastweb.accesspoint import docopt
@@ -33,7 +32,6 @@ def main():
     app.load_component(layout='service', backend='ini', path=configpath)
     components = SyncComponents()
     console_recorder('DEBUG', "[Fast command]\nyou can do anything like in fastweb")
-    argexp = re.compile(r'(.*)\((.*)\)')
     console = HistoryConsole(locals={'self': components})
     console.interact()
 

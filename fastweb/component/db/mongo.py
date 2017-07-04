@@ -78,6 +78,12 @@ class Mongo(Component):
     def error(self):
         self.isConnect = False
 
+    def reconnect(self):
+        pass
+
+    def ping(self):
+        pass
+
 
 class SyncMongo(Mongo):
     """"同步mongo

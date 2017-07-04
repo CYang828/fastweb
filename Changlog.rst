@@ -1,3 +1,11 @@
+Version: 1.4.1.13
+    add: 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
+    fix: celery错误日志打印
+    fix: celery回调后的组件释放
+    fix: 同步http_request增加超时和重试机制
+    fix: 2.7版本下使用subprocess32替代subprocess
+
+
 Version 1.4.1.12
     fix: 修复thrift同步异步客户端与server连接正常
 

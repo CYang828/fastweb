@@ -96,8 +96,9 @@ class Loader(object):
         self.configer = Configuration(backend, **setting)
         self.configs = self.configer.configs
 
-        recorder('INFO', 'load configuration\nbackend:\t{backend}\nsetting:\t{setting}'.format(backend=backend,
-                                                                                               setting=setting))
+        recorder('INFO', 'load configuration\nbackend:\t{backend}\nsetting:\t{setting}\nconfiguration:\t{config}'.format(backend=backend,
+                                                                                                                         setting=setting,
+                                                                                                                         config=self.configs))
 
     @staticmethod
     def load_component(layout, backend='ini', **setting):
@@ -117,9 +118,9 @@ class Loader(object):
         # 加载需要管理连接池的组件
         recorder('INFO', 'load connection component start')
         with timing('ms', 10) as t:
-            if layout in ('service', 'task'):
+            if layout in ['service', 'task']:
                 fastweb.manager.SyncConnManager.setup(configer)
-            elif layout in ('web',):
+            elif layout in ['web']:
                 fastweb.manager.AsynConnManager.configer = configer
                 ioloop.IOLoop.current().run_sync(fastweb.manager.AsynConnManager.setup)
         recorder('INFO', 'load connection component successful -- {time}'.format(time=t))
@@ -127,7 +128,7 @@ class Loader(object):
         # 加载不需要管理连接池的组件
         recorder('INFO', 'load component start')
         with timing('ms', 10) as t:
-            fastweb.manager.Manager.setup(configer)
+            fastweb.manager.Manager.setup(layout, configer)
         recorder('INFO', 'load component successful -- {time}'.format(time=t))
         return configer
 

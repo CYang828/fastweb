@@ -43,6 +43,7 @@ class Component(object):
         self._setting = setting
         # 存储转换后的参数
         self.setting = {}
+        self.host = None
         self.recorder = recorder
         self.status = UNUSED
         self.exceptions = []
@@ -63,27 +64,33 @@ class Component(object):
         """设置为不可用状态"""
 
         self.status = UNUSED
+        self.host = None
+        self.recorder = recorder
 
     def set_idle(self):
         """设置为空闲可用状态"""
 
         self.status = IDLE
+        self.host = None
         self.recorder = recorder
 
-    def set_used(self, logfunc):
+    def set_used(self, host):
         """设置为忙碌可用状态
 
         :parameter:
-          - `logfunc`:日志记录函数
+          - `host`: 宿主
         """
 
         self.status = USED
-        self.recorder = logfunc
+        self.host = host
+        self.recorder = host.recorder
 
     def set_error(self, ex):
         """设置为错误状态,等待回收"""
 
         self.status = ERROR
+        self.host = None
+        self.recorder = recorder
         self.exceptions.append(ex)
 
     def _check_attrs(self):

@@ -50,6 +50,9 @@ class TftRpc(Component):
     def reconnect(self):
         raise NotImplementedError
 
+    def ping(self):
+        pass
+
 
 class SyncTftRpc(TftRpc):
     """Thrift Rpc同步组件"""

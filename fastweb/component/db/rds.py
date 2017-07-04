@@ -42,6 +42,8 @@ class Redis(Component):
 
         if response == 'OK':
             return True
+        elif isinstance(response, tornadis.ClientError):
+            raise RedisError(response)
         else:
             return response
 
@@ -104,6 +106,7 @@ class AsynRedis(Redis):
     @coroutine
     def connect(self):
         self.setting['connect_timeout'] = self.setting.pop('timeout', None)
+        self.setting.pop('charset', None)
 
         try:
             self.recorder('INFO', '{obj} connect start'.format(obj=self))
@@ -123,10 +126,13 @@ class AsynRedis(Redis):
 
         try:
             cmd = shlex.split(command)
-            self.recorder('INFO', '{obj} query start\n{cmd}'.format(obj=self, cmd=command))
+            self.recorder('INFO', '{obj} query start\nCommand: {cmd}'.format(obj=self, cmd=command))
             with tool.timing('s', 10) as t:
                 response = yield self._client.call(*cmd)
-            self.recorder('INFO', 'Redis Command [{command}] -- [{time}]'.format(command=command, time=t))
+            self.recorder('INFO', '{obj} query success\nCommand: {cmd}\nResponse: {res} -- {time}'.format(obj=self,
+                                                                                                          cmd=command,
+                                                                                                          res=response,
+                                                                                                          time=t))
         except torConnectionError as e:
             self.recorder('ERROR', '{obj} connection error [{msg}]'.format(obj=self, msg=e))
             raise RedisError
