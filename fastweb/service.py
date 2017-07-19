@@ -4,10 +4,11 @@
 
 import inspect
 
-from accesspoint import TServer, TSocket, TTransport, TBinaryProtocol, TCompactProtocol
+from accesspoint import TServer, TSocket, TTransport, TCompactProtocol
 
 from fastweb import app
 from fastweb.manager import Manager
+from fastweb.util.tool import timing
 from fastweb.util.log import recorder
 from fastweb.component import Component
 from fastweb.util.process import FProcess
@@ -72,6 +73,8 @@ class Service(Component):
             self._handlers = (load_object(self._handlers))
 
         try:
+            # self._handlers = type('Worker', (self._task_cls, SyncComponents, IFaceWorker), {})()
+
             self._handlers = type('Handler', handlers, {})() if len(handlers) > 1 else self._handlers
         except TypeError as e:
             self.recorder('CRITICAL', 'handler conflict (e)'.format(e=e))
@@ -91,9 +94,24 @@ class Service(Component):
          - `handler`:AbLogic列表
         """
 
+        def process_proxy(processor):
+            for _func_name, _func in processor._processMap.items():
+                def anonymous(p, seq, ipo, opo):
+                    oproc = getattr(module, 'Processor')(handler=self._handlers())
+                    oproc._handler.requestid = seq if len(str(seq)) > 8 else oproc._handler.requestid
+                    oproc._handler.recorder('IMPORTANT', '{obj}\nremote call [{name}]'.format(obj=self, name=_func_name))
+                    with timing('ms', 8) as t:
+                        _func(oproc, seq, ipo, opo)
+                    oproc._handler.release()
+                    oproc._handler.recorder('IMPORTANT', '{obj}\nremote call [{name}] success -- {t}'.format(obj=self,
+                                                                                                         name=_func_name,
+                                                                                                         t=t))
+                processor._processMap[_func_name] = anonymous
+
         # 将所有的handlers合并成一个handler
         module = load_module(self._thrift_module)
-        processor = getattr(module, 'Processor')(self._handlers())
+        processor = getattr(module, 'Processor')(handler=None)
+        process_proxy(processor)
         transport = TSocket.TServerSocket(port=self._port)
         tfactory = TTransport.TFramedTransportFactory()
         pfactory = TCompactProtocol.TCompactProtocolFactory()
@@ -114,8 +132,6 @@ class ABLogic(SyncComponents):
 
     def __init__(self):
         super(ABLogic, self).__init__()
-        # 生成requestid
-        self.requestid = self.gen_requestid()
 
 
 def start_service_server():
@@ -142,6 +158,12 @@ def start_service_server():
 
     services = Manager.get_classified_components('service')
 
-    for service in services:
-        process = FProcess(name='ServiceProcess', task=service.start)
-        process.start()
+    if len(services) == 1:
+        # 只有一个service时，只启动一个进程
+        services[0].start()
+    else:
+        # 有多个service会启动多进程
+        # 多进程模式下不能使用pdb.set_trace的方式调试
+        for service in services:
+            process = FProcess(name='ServiceProcess', task=service.start)
+            process.start()

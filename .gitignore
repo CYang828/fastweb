@@ -9,3 +9,4 @@ fastweb.egg-info/
 .idea/
 *.rdb
 docs/_build
+.cache

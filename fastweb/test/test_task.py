@@ -3,7 +3,8 @@
 from fastweb.accesspoint import ioloop, coroutine
 from fastweb.component.task import AsynTask, SyncTask
 
-setting = {'broker': 'amqp://guest:guest@localhost:5672//',
+setting = {'_name': 'task test',
+           'broker': 'amqp://guest:guest@localhost:5672//',
            'backend': 'redis://localhost/0',
            'task_class': 'some_tasks.add.Add',
            'queue': 'test_task_queue',

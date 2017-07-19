@@ -90,8 +90,14 @@ class SyncTftRpc(TftRpc):
         pass
 
     def __getattr__(self, name):
+        self._client._seqid = int(self.owner.requestid)
         if hasattr(self._client, name):
-            return getattr(self._client, name)
+            self.owner.recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
+            r = getattr(self._client, name)
+            self.owner.recorder('INFO', 'call {obj} {name} success'.format(obj=self, name=name))
+            return r
+        else:
+            raise AttributeError
 
     def close(self):
         self._transport.close()
@@ -120,7 +126,7 @@ class AsynTftRpc(TftRpc):
         self.recorder('INFO', '{obj} connect successful'.format(obj=self))
         protocol = TCompactProtocol.TCompactProtocolFactory()
         self._client = getattr(module, 'Client')(self._transport, protocol)
-        self.recorder('DEBUG', module)
+        self._client._seqid = self.owner.requestid
         self.other = self._client
         raise Return(self)
 
@@ -137,11 +143,14 @@ class AsynTftRpc(TftRpc):
 
     def __getattr__(self, name):
         """获取远程调用方法"""
-
+        self._client._seqid = int(self.owner.requestid)
         exception_processor = ExceptionProcessor(AttributeError, self._connect)
 
         if hasattr(self._client, name):
-            return AsynProxyCall(self, name, throw_exception=RpcError, exception_processor=exception_processor)
+            self.owner.recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
+            r = AsynProxyCall(self, name, throw_exception=RpcError, exception_processor=exception_processor)
+            self.owner.recorder('INFO', 'call {obj} {name} success'.format(obj=self, name=name))
+            return r
         else:
             raise AttributeError
 

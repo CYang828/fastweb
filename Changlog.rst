@@ -1,3 +1,10 @@
+Version: 1.4.1.14
+    fix: 修复task 测试用例
+    fix: 修复只有一个service时不fork进程，只有在多于一个service时才使用多进程
+    fix: 修复调用service后，释放掉组件使用权
+    update: 通过web层调用service，requestid透传
+    fix: service层并发时，使用同一连接问题
+
 Version: 1.4.1.13
     add: 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
     fix: celery错误日志打印

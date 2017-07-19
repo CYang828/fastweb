@@ -10,7 +10,7 @@ from HelloService.ttypes import *
 
 from thrift import TTornado
 from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
+from thrift.protocol import TCompactProtocol
 from thrift.protocol import TMultiplexedProtocol
 
 from tornado import gen
@@ -29,7 +29,7 @@ def communicate():
         logging.error(ex)
         raise gen.Return()
 
-    protocol = TBinaryProtocol.TBinaryProtocolFactory()
+    protocol = TCompactProtocol.TCompactProtocolFactory()
     #pfactory = TMultiplexedProtocol.TMultiplexedProtocol(protocol, 'hello')
     client = HelloService.Client(transport, protocol)
 
@@ -44,9 +44,18 @@ def communicate():
 def main():
     # create an ioloop, do the above, then stop
     import time
+    import thread
     start = time.time()
-    for _ in xrange(10000):
+
+    def _thread():
         ioloop.IOLoop.current().run_sync(communicate)
+
+    for _ in xrange(5):
+        thread.start_new_thread(_thread, ())
+
+    while 1:
+        pass
+
     end = time.time()
     print end-start
 if __name__ == "__main__":

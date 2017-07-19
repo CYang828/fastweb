@@ -30,8 +30,6 @@ class Manager(object):
     _pools = {}
     _classified_pools = defaultdict(list)
 
-
-
     @staticmethod
     def setup(layout, configer):
         """安装组件"""
@@ -70,7 +68,7 @@ class Manager(object):
         return Manager._classified_pools.get(cpre, [])
 
     @staticmethod
-    def get_component(name, host):
+    def get_component(name, owner):
         """通过manager获取组件
 
         ManagerError:可能是配置文件错误或者程序错误,应该尽快进行处理,不应该再向下继续运行
@@ -85,7 +83,7 @@ class Manager(object):
                 component = pool.get_connection()
             else:
                 component = pool
-            component.set_used(host)
+            component.set_used(owner)
             return component
         else:
             recorder('CRITICAL',
