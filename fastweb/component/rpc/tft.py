@@ -126,7 +126,6 @@ class AsynTftRpc(TftRpc):
         self.recorder('INFO', '{obj} connect successful'.format(obj=self))
         protocol = TCompactProtocol.TCompactProtocolFactory()
         self._client = getattr(module, 'Client')(self._transport, protocol)
-        self._client._seqid = self.owner.requestid
         self.other = self._client
         raise Return(self)
 

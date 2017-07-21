@@ -5,7 +5,7 @@ from fastweb.accesspoint import ioloop, coroutine
 from fastweb.component.db.mysql import SyncMysql, AsynMysql
 
 
-setting = {'host': 'localhost', 'port': 3306, 'user': 'root', 'password': '1a2s3dqwe'}
+setting = {'host': 'localhost', 'port': 3306, 'user': 'root', 'password': ''}
 
 
 class TestSyncMysql(object):

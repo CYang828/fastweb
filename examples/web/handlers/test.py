@@ -3,7 +3,7 @@
 import time
 
 from fastweb.web import Api, Page
-from fastweb.web import Request
+from fastweb.component.request import Request
 from fastweb.web import coroutine, run_on_executor
 
 
