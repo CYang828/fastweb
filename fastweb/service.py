@@ -104,8 +104,8 @@ class Service(Component):
                         _func(oproc, seq, ipo, opo)
                     oproc._handler.release()
                     oproc._handler.recorder('IMPORTANT', '{obj}\nremote call [{name}] success -- {t}'.format(obj=self,
-                                                                                                         name=_func_name,
-                                                                                                         t=t))
+                                                                                                             name=_func_name,
+                                                                                                             t=t))
                 processor._processMap[_func_name] = anonymous
 
         # 将所有的handlers合并成一个handler
