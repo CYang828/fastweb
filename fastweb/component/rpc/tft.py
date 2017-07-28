@@ -53,8 +53,8 @@ class TftRpc(Component):
     def ping(self):
         pass
 
-    def _recorder(self):
-        return self.owner.recorder if self.owner else recorder
+    def _recorder(self, level, msg):
+        return self.owner.recorder(level, msg) if self.owner else recorder(level, msg)
 
 
 class SyncTftRpc(TftRpc):
