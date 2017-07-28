@@ -10,5 +10,7 @@ python:
   - '2.7'
 os:
   - 'linux'
-script: pytest
+script:
+  - python service_server.py
+  - pytest
 
