@@ -19,7 +19,7 @@ class TestLoader(object):
         assert app.configs['default_config']['name'] == 'xxxxx'
 
     def test_load_component(self):
-        app.load_component(layout='web', backend='ini', path='config/service.ini')
+        app.load_component(layout='web', backend='ini', path='config/component.ini')
 
     def test_load_errcode(self):
         app.load_errcode()
