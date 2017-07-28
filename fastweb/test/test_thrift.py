@@ -3,8 +3,8 @@
 from fastweb.accesspoint import ioloop
 from fastweb.component.rpc.tft import AsynTftRpc, SyncTftRpc
 
-sync_setting = {'host': 'localhost', 'port': 7777, 'thrift_module': 'fastweb_thrift_sync.HelloService.HelloService'}
-asyn_setting = {'host': 'localhost', 'port': 7777, 'thrift_module': 'fastweb_thrift_async.HelloService.HelloService'}
+sync_setting = {'host': 'localhost', 'port': 7777, 'thrift_module': 'fastweb.test.fastweb_thrift_sync.HelloService.HelloService'}
+asyn_setting = {'host': 'localhost', 'port': 7777, 'thrift_module': 'fastweb.test.fastweb_thrift_async.HelloService.HelloService'}
 
 
 class TestSyncThrift(object):
