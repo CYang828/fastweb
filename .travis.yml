@@ -11,6 +11,6 @@ python:
 os:
   - 'linux'
 script:
-  - python service_server.py
+  - python fastweb/test/service_server.py
   - pytest
 
