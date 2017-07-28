@@ -1,6 +1,8 @@
 Fastweb - 高速迭代 · 快速试错
 ============================
 
+|build-status| |license|
+
 依赖 ``Tornado`` ``Celery`` ``Thrift`` 开发的快速构建web应用的框架。
 
 Web层示例
