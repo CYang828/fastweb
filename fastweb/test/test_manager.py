@@ -15,13 +15,13 @@ class TestSyncManager(object):
 
     def test_setup(self):
         configer = app.load_component('web', backend='ini', path='fastweb/test/config/service.ini')
-        SyncConnManager.setup('web', configer)
+        SyncConnManager.setup(configer)
 
 
 class TestAsynManager(object):
 
     def test_setup(self):
         configer = app.load_component('web', backend='ini', path='fastweb/test/config/service.ini')
-        AsynConnManager.setup('web', configer)
+        AsynConnManager.setup(configer)
 
 
