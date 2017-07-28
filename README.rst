@@ -1,7 +1,7 @@
 Fastweb - 高速迭代 · 快速试错
 ============================
 
-|build-status| |license|
+|build-status|
 
 依赖 ``Tornado`` ``Celery`` ``Thrift`` 开发的快速构建web应用的框架。
 
@@ -172,3 +172,8 @@ Fastweb是一个快速构建web应用的框架，与Python的哲学相同，都�
 抉择
 ----
 关于为什么选择 ``Tornado`` ``Celery`` ``Thrift`` 作为Fastweb的工具集合中的重要成员。
+
+
+.. |build-status| image:: https://travis-ci.org/BSlience/fastweb.svg?branch=master
+    :alt: Build status
+    :target: https://travis-ci.org/BSlience/fastweb
