@@ -13,7 +13,6 @@ class HelloServiceHandler(ABLogic):
         print 'hello'
         pass
 
-    def getData(self):
-        pass
+
 
 
