@@ -1,3 +1,6 @@
+Version 1.4.1.15
+    fix: 修复非web组件调用thrift没有requestid错误
+
 Version: 1.4.1.14
     fix: 修复task 测试用例
     fix: 修复只有一个service时不fork进程，只有在多于一个service时才使用多进程
