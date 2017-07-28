@@ -15,11 +15,11 @@ class TestLoader(object):
         app.load_recorder('app.log', system_log_path='sys.log', system_level='INFO')
 
     def test_load_configuration(self):
-        app.load_configuration(backend='ini', path='config/config.ini')
+        app.load_configuration(backend='ini', path='fastweb/test/config/config.ini')
         assert app.configs['default_config']['name'] == 'xxxxx'
 
     def test_load_component(self):
-        app.load_component(layout='web', backend='ini', path='config/component.ini')
+        app.load_component(layout='web', backend='ini', path='fastweb/test/config/component.ini')
 
     def test_load_errcode(self):
         app.load_errcode()
