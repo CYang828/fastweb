@@ -93,7 +93,7 @@ class SyncTftRpc(TftRpc):
         pass
 
     def __getattr__(self, name):
-        self._client._seqid = int(self.owner.requestid) if self.owner else None
+        self._client._seqid = int(self.owner.requestid) if self.owner else 0
         if hasattr(self._client, name):
             self._recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
             r = getattr(self._client, name)
@@ -145,7 +145,7 @@ class AsynTftRpc(TftRpc):
 
     def __getattr__(self, name):
         """获取远程调用方法"""
-        self._client._seqid = int(self.owner.requestid) if self.owner else None
+        self._client._seqid = int(self.owner.requestid) if self.owner else 0
         exception_processor = ExceptionProcessor(AttributeError, self._connect)
 
         if hasattr(self._client, name):
