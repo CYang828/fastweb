@@ -45,7 +45,7 @@ class Mysql(Component):
     def _prepare(self):
         """准备工作"""
         self.setting['passwd'] = self.setting.pop('password', None)
-        self.setting['connect_timeout'] = self.setting.pop('timeout', None)
+        self.setting['connect_timeout'] = self.setting.pop('timeout', DEFAULT_TIMEOUT)
 
     def _format_sql(self, sql, args):
         """格式化sql
