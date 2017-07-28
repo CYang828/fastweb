@@ -1,5 +1,6 @@
 Version 1.4.1.15
     fix: 修复非web组件调用thrift没有requestid错误
+    update: service合并多个handler为一个,并自动集成ABLogic
 
 Version: 1.4.1.14
     fix: 修复task 测试用例

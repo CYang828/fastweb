@@ -65,19 +65,13 @@ class Service(Component):
         self._active = self.setting.get('active', True)
         self.size = self.setting.get('size', DEFAULT_THREADPOOL_SIZE)
 
-        # 合并多个handler为一个
-        # TODO:handler合并应该遵守一些规则
-        if isinstance(self._handlers, (tuple, list)):
-            self._handlers = (load_object(handler) for handler in self._handlers)
-        elif isinstance(self._handlers, str):
-            self._handlers = (load_object(self._handlers))
+        # 合并多个handler为一个,并自动集成ABLogic
+        handlers = tuple(load_object(handler) for handler in handlers)
 
         try:
-            # self._handlers = type('Worker', (self._task_cls, SyncComponents, IFaceWorker), {})()
-
-            self._handlers = type('Handler', handlers, {})() if len(handlers) > 1 else self._handlers
+            self._handlers = type('Handler', handlers + (ABLogic, ), {})
         except TypeError as e:
-            self.recorder('CRITICAL', 'handler conflict (e)'.format(e=e))
+            self.recorder('CRITICAL', 'handler conflict ({e})'.format(e=e))
 
     def __str__(self):
         return '<Service|{name} {port} {module}->{handler}>'.format(name=self.name,

@@ -1,9 +1,7 @@
 # coding:utf8
 
-from fastweb.service import ABLogic
 
-
-class HelloServiceHandler(ABLogic):
+class HelloServiceHandler(object):
 
     def sayHello(self):
         print 'sayHello'

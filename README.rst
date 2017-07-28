@@ -177,3 +177,4 @@ Fastweb是一个快速构建web应用的框架，与Python的哲学相同，都�
 .. |build-status| image:: https://travis-ci.org/BSlience/fastweb.svg?branch=master
     :alt: Build status
     :target: https://travis-ci.org/BSlience/fastweb
+
