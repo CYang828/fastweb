@@ -53,6 +53,9 @@ class TftRpc(Component):
     def ping(self):
         pass
 
+    def _recorder(self):
+        return self.owner.recorder if self.owner else recorder
+
 
 class SyncTftRpc(TftRpc):
     """Thrift Rpc同步组件"""
@@ -92,9 +95,9 @@ class SyncTftRpc(TftRpc):
     def __getattr__(self, name):
         self._client._seqid = int(self.owner.requestid) if self.owner else None
         if hasattr(self._client, name):
-            self.owner.recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
+            self._recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
             r = getattr(self._client, name)
-            self.owner.recorder('INFO', 'call {obj} {name} success'.format(obj=self, name=name))
+            self._recorder('INFO', 'call {obj} {name} success'.format(obj=self, name=name))
             return r
         else:
             raise AttributeError
@@ -146,9 +149,9 @@ class AsynTftRpc(TftRpc):
         exception_processor = ExceptionProcessor(AttributeError, self._connect)
 
         if hasattr(self._client, name):
-            self.owner.recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
+            self._recorder('INFO', 'call {obj} {name} start'.format(obj=self, name=name))
             r = AsynProxyCall(self, name, throw_exception=RpcError, exception_processor=exception_processor)
-            self.owner.recorder('INFO', 'call {obj} {name} success'.format(obj=self, name=name))
+            self._recorder('INFO', 'call {obj} {name} success'.format(obj=self, name=name))
             return r
         else:
             raise AttributeError
