@@ -81,3 +81,9 @@ class TaskError(ComponentError):
 class ThriftParserError(ComponentError):
     """thrift文件解析错误"""
     pass
+
+
+class SoapError(ComponentError):
+    """Soap 错误"""
+    pass
+

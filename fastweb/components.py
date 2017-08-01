@@ -9,10 +9,13 @@ from concurrent.futures import ThreadPoolExecutor
 import fastweb.manager
 from fastweb import app
 from fastweb.compat import subprocess
-from fastweb.accesspoint import HTTPClient
 from fastweb.util.log import record, recorder
 from fastweb.util.tool import uniqueid, timing, RetryPolicy, Retry
-from fastweb.exception import ComponentError, SubProcessError, SubProcessTimeoutError, HttpError
+from fastweb.accesspoint import HTTPClient, CachingClient, UsernameToken, Error, Transport
+from fastweb.exception import ComponentError, SubProcessError, SubProcessTimeoutError, HttpError, SoapError
+
+
+__all__ = ['UsernameToken']
 
 
 class Components(object):
@@ -184,4 +187,31 @@ class SyncComponents(Components):
         _recorder('INFO', 'call subprocess successful\n{cmd}\n{msg}\n<{time}>'.format(
             cmd=command, time=t, msg=result.strip() if result else error.strip()))
         return result, error
+
+    def soap_request(self, request):
+        """soap 请求"""
+
+        soap_retry_policy = RetryPolicy(times=request.retry, error=SoapError)
+        return Retry(self, '{obj}'.format(obj=self), self._soap_request, soap_retry_policy, request).run_sync()
+
+    def _soap_request(self, retry, request):
+        if hasattr(self, 'requestid'):
+            _recorder = self.recorder
+        else:
+            _recorder = recorder
+
+        _recorder('INFO', 'soap request start {request}'.format(request=request))
+
+        with timing('ms', 10) as t:
+            try:
+                transport = Transport(request.timeout)
+                client = CachingClient(wsdl=request.wsdl, wsse=request.wsse, transport=transport)
+                response = getattr(client.service, request.function)(**request.kwargs)
+            except Error as e:
+                _recorder('ERROR', 'soap request error ({e})'.format(e=e))
+                raise retry
+
+        _recorder('INFO', 'soap request successful\n{response} -- {time}'.format(response=response, time=t))
+        return response
+
 

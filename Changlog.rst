@@ -1,3 +1,7 @@
+
+Version 1.4.1.16
+    add: 增加soap调用
+
 Version 1.4.1.15
     fix: 修复非web组件调用thrift没有requestid错误
     update: service合并多个handler为一个,并自动集成ABLogic

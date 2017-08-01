@@ -5,6 +5,7 @@ import urllib
 from fastweb.accesspoint import HTTPRequest
 
 
+DEFAULT_TIMEOUT = 5
 DEFAULT_RETRY_TIME = 3
 
 
@@ -47,3 +48,19 @@ class Request(HTTPRequest):
 
     def __str__(self):
         return '<Request {method} {url} {body}>'.format(method=self.method, url=self.url, body=self.body)
+
+
+class SoapRequest(object):
+    """Soap 请求对象"""
+
+    def __init__(self, wsdl, function, wsse=None, retry=DEFAULT_RETRY_TIME, timeout=DEFAULT_TIMEOUT, **kwargs):
+        self.wsdl = wsdl
+        self.function = function
+        self.wsse = wsse
+        self.kwargs = kwargs
+        self.retry = retry
+        self.timeout = timeout
+
+    def __str__(self):
+        return '<SoapRequest {wsdl} {function} {kwargs}>'.format(wsdl=self.wsdl, function=self.function,
+                                                                 kwargs=self.kwargs)
