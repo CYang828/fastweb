@@ -1,6 +1,7 @@
 
 Version 1.4.1.16
     add: 增加soap调用
+    update: task client不需要task_class参数
 
 Version 1.4.1.15
     fix: 修复非web组件调用thrift没有requestid错误

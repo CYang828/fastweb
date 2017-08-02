@@ -15,7 +15,7 @@ DEFAULT_TIMEOUT = 5
 class Task(Component, CeleryTask):
     """任务类"""
 
-    eattr = {'task_class': str, 'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
+    eattr = {'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
     oattr = {'timeout': int}
 
     def __init__(self, setting):
