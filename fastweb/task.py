@@ -14,13 +14,14 @@ from fastweb.exception import TaskError
 from fastweb.component.task import Task
 from fastweb.util.python import load_object
 from fastweb.components import SyncComponents
+from fastweb.accesspoint import CeleryTask
 
 
 __all__ = ['start_task_worker']
 DEFAULT_TIMEOUT = 5
 
 
-class IFaceWorker(object):
+class IFaceWorker(CeleryTask):
     def on_success(self, retval, task_id, args, kwargs):
         pass
 
@@ -38,7 +39,7 @@ class Worker(Task):
     """工作者类"""
 
     eattr = {'task_class': str, 'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
-    oattr = {'timeout': int}
+    oattr = {'timeout': int, 'rate_limit': str, 'acks_late': bool}
 
     def __init__(self, setting):
         """初始化任务"""

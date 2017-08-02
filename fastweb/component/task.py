@@ -28,6 +28,8 @@ class Task(Component, CeleryTask):
         self.name = setting['_name']
         exchange_type = self.setting.get('exchange_type', 'direct')
         self.timeout = self.setting.get('timeout', DEFAULT_TIMEOUT)
+        rate_limit = self.setting.get('rate_limit', None)
+        acks_late = self.setting.get('acks_late', None)
         self.requestid = None
 
         # 设置绑定的application的属性
@@ -38,7 +40,9 @@ class Task(Component, CeleryTask):
         # 设置任务的路由
         queue = Queue(name=self.queue, exchange=Exchange(name=self.exchange, type=exchange_type), routing_key=self.routing_key)
         app.conf.update(task_queues=(queue,),
-                        task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}})
+                        task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}},
+                        task_annotations={self.name: {'rate_limit': rate_limit}},
+                        task_acks_late=acks_late)
 
         # task和application绑定
         self.application = app
@@ -108,8 +112,8 @@ class AsynTask(Task):
         self.requestid = self.owner.requestid if self.owner else None
         with timing('ms', 10) as t:
             self.recorder('INFO', 'asynchronous call {obj} start\nArgument: {args} {kwargs}'.format(obj=self,
-                                                                                                      args=args,
-                                                                                                      kwargs=kwargs))
+                                                                                                    args=args,
+                                                                                                    kwargs=kwargs))
             # 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
             taskid = yield torcelery.async(self,
                                            task_id=self.requestid,
@@ -127,9 +131,9 @@ class AsynTask(Task):
         self.requestid = self.owner.requestid if self.owner else None
         # TODO:多个同步任务的链式调用
         with timing('ms', 10) as t:
-            self.recorder('INFO', 'synchronize call {task} start\nArgument: {args} {kwargs}'.format(obj=self,
-                                                                                                      args=args,
-                                                                                                      kwargs=kwargs))
+            self.recorder('INFO', 'synchronize call {obj} start\nArgument: {args} {kwargs}'.format(obj=self,
+                                                                                                   args=args,
+                                                                                                   kwargs=kwargs))
             # 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
             result = yield torcelery.sync(self, self.timeout,
                                           task_id=self.requestid,
@@ -144,7 +148,8 @@ class AsynTask(Task):
                           'synchronize call {obj} timeout -- {t}'.format(obj=self, ret=result, t=t))
             raise TaskError
 
-        self.recorder('INFO', 'synchronize call {obj} successful -- {ret} -- {t}'.format(obj=self,
+        self.recorder('INFO', 'synchronize call {obj} successful\n'
+                              'Return:{ret} -- {t}'.format(obj=self,
                                                                                          ret=result,
                                                                                          t=t))
         raise Return(result)
