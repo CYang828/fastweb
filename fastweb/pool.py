@@ -4,11 +4,13 @@
 
 import json
 import threading
-from Queue import Queue, Empty
+from Queue import Empty, Full
+from multiprocessing import Queue
 
 from accesspoint import coroutine, ioloop, Return
 
 from fastweb.util.log import recorder
+from fastweb.exception import PoolError
 from fastweb.util.thread import FThread
 
 DEFAULT_TIMEOUT = 50000
@@ -88,8 +90,14 @@ class SyncConnectionPool(ConnectionPool):
         """同步增加连接"""
 
         connection = self._create_connection()
-        self._pool.put_nowait(connection)
+        try:
+            self._pool.put_nowait(connection)
+        except Full:
+            recorder('ERROR', '<{name}> connection pool is full'.format(name=self._name))
+            raise PoolError
+
         self._unused_pool.append(connection)
+        return connection
 
     def create(self):
         """同步创建连接池"""
@@ -121,14 +129,13 @@ class SyncConnectionPool(ConnectionPool):
         """获取连接"""
 
         try:
-            self._lock.acquire()
-            connection = self._pool.get(block=True)
+            connection = self._pool.get_nowait()
             self._unused_pool.remove(connection)
-            self._lock.release()
         except Empty:
-            connection = self._create_connection()
+            connection = self.add_connection()
             recorder('WARN', '<{name}> connection pool is empty,create a new connection {conn}'.format(name=self._name,
                                                                                                        conn=connection))
+            connection = self._pool.get_nowait()
 
         self._used_pool.append(connection)
         recorder('DEBUG', '{obj} get connection {conn} {id}, left connections {count}'.format(obj=self, conn=connection,
@@ -166,7 +173,12 @@ class AsynConnectionPool(ConnectionPool):
         """同步增加连接"""
 
         connection = yield self._create_connection()
-        self._pool.put_nowait(connection)
+        try:
+            self._pool.put_nowait(connection)
+        except Full:
+            recorder('ERROR', '<{name}> connection pool is full'.format(name=self._name))
+            raise PoolError
+
         self._unused_pool.append(connection)
 
     def rescue(self):
@@ -215,7 +227,7 @@ class AsynConnectionPool(ConnectionPool):
             recorder('CRITICAL',
                      '<{name}> connection pool is empty,please use service to separate your database operation'.format(
                          name=self._name))
-            raise
+            raise PoolError
 
         self._used_pool.append(connection)
         recorder('DEBUG', '{obj} get connection {conn} {id}, left connections {count}'.format(obj=self, conn=connection,

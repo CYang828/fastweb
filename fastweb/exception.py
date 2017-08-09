@@ -87,3 +87,8 @@ class SoapError(ComponentError):
     """Soap 错误"""
     pass
 
+
+class PoolError(ComponentError):
+    """连接池错误"""
+    pass
+

@@ -9,6 +9,8 @@ from fastweb.exception import MysqlError
 from fastweb.util.tool import Retry, RetryPolicy
 from fastweb.accesspoint import iostream, pymysql, tornado_mysql, coroutine, Return
 
+pymysql.threadsafety = 2
+tornado_mysql.threadsafety = 2
 
 DEFAULT_PORT = 3306
 DEFAULT_TIMEOUT = 5
