@@ -13,6 +13,9 @@
 load component + filter
 20 service 进入和出口时打印日志
 21 异步连接池scale机制问题
+22 不通过thrift来手动生成thrift hub，而是通过框架自动生成
+23 service 的加载方式不是很好（可以更简单）
+24 task 的加载方式不是很好（可以更易懂）
 
 
 ♦︎ 连接池初始化后，中途mysql连接断开reconnect时增加超时时间，防止请求时长时间不返回
@@ -26,5 +29,4 @@ load component + filter
 
 ♦ tox集成测试
 
-♦ pytest替换unittest
 

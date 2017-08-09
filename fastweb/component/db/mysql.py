@@ -256,7 +256,9 @@ class SyncMysql(Mysql):
         if not self._event:
             self.commit()
 
-        return self._cur.rowcount
+        effect = self._cur.rowcount
+        self._cur.close()
+        return effect
 
     def close(self):
         """关闭连接"""
@@ -413,7 +415,9 @@ class AsynMysql(Mysql):
         if not self._event:
             yield self.commit()
 
-        raise Return(self._cur.rowcount)
+        effect = self._cur.rowcount
+        yield self._cur.close()
+        raise Return(effect)
 
     @coroutine
     def rollback(self):
