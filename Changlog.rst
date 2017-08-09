@@ -1,3 +1,7 @@
+
+Version: 1.4.1.18
+    fix: mysql InterfaceError
+
 Version 1.4.1.16
     add: 增加soap调用
     update: task client不需要task_class参数
