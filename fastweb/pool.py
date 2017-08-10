@@ -135,7 +135,7 @@ class SyncConnectionPool(ConnectionPool):
             connection = self.add_connection()
             recorder('WARN', '<{name}> connection pool is empty,create a new connection {conn}'.format(name=self._name,
                                                                                                        conn=connection))
-            connection = self._pool.get_nowait()
+            return self.get_connection()
 
         self._used_pool.append(connection)
         recorder('DEBUG', '{obj} get connection {conn} {id}, left connections {count}'.format(obj=self, conn=connection,

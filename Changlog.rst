@@ -1,3 +1,6 @@
+Version: 1.4.1.20
+    fix: component序列化问题
+
 Version: 1.4.1.19
     fix: 同步连接池最大连接数及获取连接逻辑
 

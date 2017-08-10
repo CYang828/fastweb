@@ -50,6 +50,9 @@ class Component(object):
 
         self._check_attrs()
 
+    def __reduce__(self):
+        return Component, (self.setting,)
+
     def set_name(self, name):
         """设置组件名称
 
