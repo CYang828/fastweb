@@ -40,6 +40,7 @@ class ConnectionPool(object):
         self._setting = setting
         self._maxconnections = int(maxconnections) if maxconnections else DEFAULT_MAXCONN
         self._pool = Queue(self._maxconnections)
+        self._unused_pool = []
         self._rescue_thread = None
         self._tlock = Lock()
 
@@ -74,6 +75,9 @@ class ConnectionPool(object):
 
 
 class SyncConnectionPool(ConnectionPool):
+    """支持多线程，不支持多进程
+       多进程需要为每个进程单独创建自己的连接池"""
+
     def __str__(self):
         return '<{name}|SyncConnectionPool>'.format(name=self._name)
 
@@ -89,6 +93,7 @@ class SyncConnectionPool(ConnectionPool):
         try:
             self._tlock.acquire()
             self._pool.put_nowait(connection)
+            self._unused_pool.append(connection)
             self._tlock.release()
         except Full:
             recorder('ERROR', '<{name}> connection pool is full'.format(name=self._name))
@@ -117,12 +122,9 @@ class SyncConnectionPool(ConnectionPool):
         """
 
         recorder('INFO', '{thread} <{name}> rescue connection start'.format(thread=thread, name=self._name))
-        unused_pool = copy.deepcopy(self._pool)
-        for conn in iter(unused_pool, None):
+        for conn in self._unused_pool:
             if conn:
                 conn.ping()
-            else:
-                break
         recorder('INFO', '{thread} <{name}> rescue connection successful'.format(thread=thread, name=self._name))
 
     def get_connection(self):
@@ -131,6 +133,7 @@ class SyncConnectionPool(ConnectionPool):
         try:
             self._tlock.acquire()
             connection = self._pool.get_nowait()
+            self._unused_pool.remove(connection)
             self._tlock.release()
         except Empty:
             connection = self.add_connection()
@@ -145,6 +148,8 @@ class SyncConnectionPool(ConnectionPool):
 
 
 class AsynConnectionPool(ConnectionPool):
+    """tornado使用，不支持多线程，不支持多进程"""
+
     def __str__(self):
         return '<{name}|AsynConnectionPool>'.format(name=self._name)
 
@@ -175,6 +180,7 @@ class AsynConnectionPool(ConnectionPool):
         connection = yield self._create_connection()
         try:
             self._pool.put_nowait(connection)
+            self._unused_pool.append(connection)
         except Full:
             recorder('ERROR', '<{name}> connection pool is full'.format(name=self._name))
             raise PoolError
@@ -190,13 +196,11 @@ class AsynConnectionPool(ConnectionPool):
 
         def on_rescue():
             recorder('INFO', '<{name}> rescue connection start'.format(name=self._name))
-            unused_pool = copy.deepcopy(self._pool)
-            for conn in iter(unused_pool, None):
+            for conn in self._unused_pool:
                 if conn:
                     future = conn.ping()
                     ioloop.IOLoop.current().add_future(future, on_reconnect)
-                else:
-                    break
+
             recorder('INFO', '<{name}> rescue connection successful'.format(name=self._name))
             self.rescue()
 
@@ -220,6 +224,7 @@ class AsynConnectionPool(ConnectionPool):
         # TODO:连接池扩展机制问题
         try:
             connection = self._pool.get(block=True)
+            self._unused_pool.remove(connection)
             if self._pool.qsize() < 2:
                 self.scale_connections()
         except Empty:
