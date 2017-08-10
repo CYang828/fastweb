@@ -2,14 +2,28 @@
 
 """任务模块"""
 
+import fastweb
+from fastweb.loader import app
 from fastweb.spec import torcelery
 from fastweb.util.tool import timing
 from fastweb.component import Component
 from fastweb.exception import TaskError
 from fastweb.accesspoint import CeleryTask, Celery, Queue, Exchange, coroutine, Return
 
+from celery.loaders.base import BaseLoader
+
 
 DEFAULT_TIMEOUT = 5
+
+
+class TaskLoader(BaseLoader):
+    """worker子进程创建后"""
+
+    def on_worker_process_init(self):
+        """worker子进程创建后，利用 `copy-on-write` 为每一个进程创建属于自己的连接池"""
+
+        for configer in app.component_configers:
+            fastweb.manager.SyncConnManager.setup(configer)
 
 
 class Task(Component, CeleryTask):
@@ -33,7 +47,7 @@ class Task(Component, CeleryTask):
         self.requestid = None
 
         # 设置绑定的application的属性
-        app = Celery(main=self.name, broker=self.broker, backend=self.backend)
+        app = Celery(main=self.name, loader=TaskLoader, broker=self.broker, backend=self.backend)
         app.tasks.register(self)
         self.backend = app.backend
 

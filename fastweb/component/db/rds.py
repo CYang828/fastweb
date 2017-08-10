@@ -58,6 +58,9 @@ class SyncRedis(Redis):
     """同步redis
        线程不安全"""
 
+    def __reduce__(self):
+        return SyncRedis, (self.setting,)
+
     def __str__(self):
         return '<SyncRedis {name} {host} {port} {db} {charset}>'.format(
             name=self.name, host=self.host, port=self.port, db=self.db, charset=self.charset)
@@ -98,6 +101,9 @@ class SyncRedis(Redis):
 
 class AsynRedis(Redis):
     """异步redis组件"""
+
+    def __reduce__(self):
+        return AsynRedis, (self.setting,)
 
     def __str__(self):
         return '<AsynRedis {name} {host} {port} >'.format(

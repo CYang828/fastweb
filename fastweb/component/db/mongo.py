@@ -90,6 +90,9 @@ class SyncMongo(Mongo):
         线程不安全
     """
 
+    def __reduce__(self):
+        return SyncMongo, (self.setting,)
+
     def __str__(self):
         return '<SyncMongo {name} {host} {port} {db}>'.format(
             name=self.name, host=self.host, port=self.port, db=self.db)
@@ -135,6 +138,9 @@ class SyncMongo(Mongo):
 
 class AsynMongo(Mongo):
     """异步Mongo组件"""
+
+    def __reduce__(self):
+        return AsynMongo, (self.setting,)
 
     def __str__(self):
         return '<AsynMongo {host} {port} {name}>'.format(

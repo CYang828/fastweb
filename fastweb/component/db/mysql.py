@@ -137,6 +137,9 @@ class SyncMysql(Mysql):
     """同步mysql
        线程不安全"""
 
+    def __reduce__(self):
+        return SyncMysql, (self.setting,)
+
     def __str__(self):
         return '<SyncMysql|{name}|{id} {host} {port} {user} {db} {charset}>'.format(
             id=id(self),
@@ -286,6 +289,9 @@ class SyncMysql(Mysql):
 
 class AsynMysql(Mysql):
     """异步mysql组件"""
+
+    def __reduce__(self):
+        return AsynMysql, (self.setting,)
 
     def __str__(self):
         return '<AsynMysql|{name}|{id} {host} {port} {user} {db} {charset}>'.format(

@@ -28,6 +28,7 @@ class Loader(object):
         # 配置系统
         self.configs = None
         self.configer = None
+        self.component_configers = []
 
         # 日志系统
         self.system_recorder = None
@@ -100,8 +101,7 @@ class Loader(object):
                                                                                                                          setting=setting,
                                                                                                                          config=self.configs))
 
-    @staticmethod
-    def load_component(layout, backend='ini', **setting):
+    def load_component(self, layout, backend='ini', **setting):
         """加载组件管理器
 
         可以进行多次加载
@@ -118,7 +118,7 @@ class Loader(object):
         # 加载需要管理连接池的组件
         recorder('INFO', 'load connection component start')
         with timing('ms', 10) as t:
-            if layout in ['service', 'task']:
+            if layout in ['service']:
                 fastweb.manager.SyncConnManager.setup(configer)
             elif layout in ['web']:
                 fastweb.manager.AsynConnManager.configer = configer
@@ -130,6 +130,7 @@ class Loader(object):
         with timing('ms', 10) as t:
             fastweb.manager.Manager.setup(layout, configer)
         recorder('INFO', 'load component successful -- {time}'.format(time=t))
+        self.component_configers.append(configer)
         return configer
 
     def load_errcode(self, errcode=None):

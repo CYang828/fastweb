@@ -3,9 +3,9 @@
 """连接池模块"""
 
 import json
-import threading
-from Queue import Empty, Full
-from multiprocessing import Queue
+import copy
+from threading import Lock
+from Queue import Empty, Full, Queue
 
 from accesspoint import coroutine, ioloop, Return
 
@@ -38,12 +38,10 @@ class ConnectionPool(object):
         self._size = int(size)
         self._timeout = int(awake) if awake else DEFAULT_TIMEOUT
         self._setting = setting
-        self._used_pool = []
-        self._unused_pool = []
         self._maxconnections = int(maxconnections) if maxconnections else DEFAULT_MAXCONN
         self._pool = Queue(self._maxconnections)
-        self._lock = threading.Lock()
         self._rescue_thread = None
+        self._tlock = Lock()
 
     def remove_connection(self, connection):
         """移除连接"""
@@ -63,8 +61,6 @@ class ConnectionPool(object):
         :parameter:
           - `connection`:连接"""
 
-        self._used_pool.remove(connection)
-        self._unused_pool.append(connection)
         self._pool.put_nowait(connection)
         recorder('DEBUG',
                  '<{name}> return connection {conn}, total connections {count}'.format(name=self._name,
@@ -91,12 +87,12 @@ class SyncConnectionPool(ConnectionPool):
 
         connection = self._create_connection()
         try:
+            self._tlock.acquire()
             self._pool.put_nowait(connection)
+            self._tlock.release()
         except Full:
             recorder('ERROR', '<{name}> connection pool is full'.format(name=self._name))
             raise PoolError
-
-        self._unused_pool.append(connection)
         return connection
 
     def create(self):
@@ -121,23 +117,27 @@ class SyncConnectionPool(ConnectionPool):
         """
 
         recorder('INFO', '{thread} <{name}> rescue connection start'.format(thread=thread, name=self._name))
-        for conn in self._unused_pool:
-            conn.ping()
+        unused_pool = copy.deepcopy(self._pool)
+        for conn in iter(unused_pool, None):
+            if conn:
+                conn.ping()
+            else:
+                break
         recorder('INFO', '{thread} <{name}> rescue connection successful'.format(thread=thread, name=self._name))
 
     def get_connection(self):
         """获取连接"""
 
         try:
+            self._tlock.acquire()
             connection = self._pool.get_nowait()
-            self._unused_pool.remove(connection)
+            self._tlock.release()
         except Empty:
             connection = self.add_connection()
             recorder('WARN', '<{name}> connection pool is empty,create a new connection {conn}'.format(name=self._name,
                                                                                                        conn=connection))
             return self.get_connection()
 
-        self._used_pool.append(connection)
         recorder('DEBUG', '{obj} get connection {conn} {id}, left connections {count}'.format(obj=self, conn=connection,
                                                                                               id=id(connection),
                                                                                               count=self._pool.qsize()))
@@ -179,8 +179,6 @@ class AsynConnectionPool(ConnectionPool):
             recorder('ERROR', '<{name}> connection pool is full'.format(name=self._name))
             raise PoolError
 
-        self._unused_pool.append(connection)
-
     def rescue(self):
         """异步恢复连接
         目前全量恢复
@@ -192,9 +190,13 @@ class AsynConnectionPool(ConnectionPool):
 
         def on_rescue():
             recorder('INFO', '<{name}> rescue connection start'.format(name=self._name))
-            for conn in self._unused_pool:
-                future = conn.ping()
-                ioloop.IOLoop.current().add_future(future, on_reconnect)
+            unused_pool = copy.deepcopy(self._pool)
+            for conn in iter(unused_pool, None):
+                if conn:
+                    future = conn.ping()
+                    ioloop.IOLoop.current().add_future(future, on_reconnect)
+                else:
+                    break
             recorder('INFO', '<{name}> rescue connection successful'.format(name=self._name))
             self.rescue()
 
@@ -217,10 +219,7 @@ class AsynConnectionPool(ConnectionPool):
 
         # TODO:连接池扩展机制问题
         try:
-            self._lock.acquire()
             connection = self._pool.get(block=True)
-            self._unused_pool.remove(connection)
-            self._lock.release()
             if self._pool.qsize() < 2:
                 self.scale_connections()
         except Empty:
@@ -229,7 +228,6 @@ class AsynConnectionPool(ConnectionPool):
                          name=self._name))
             raise PoolError
 
-        self._used_pool.append(connection)
         recorder('DEBUG', '{obj} get connection {conn} {id}, left connections {count}'.format(obj=self, conn=connection,
                                                                                               id=id(connection),
                                                                                               count=self._pool.qsize()))

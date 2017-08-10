@@ -8,7 +8,7 @@ from fastweb.component.rpc.tft import (AsynTftRpc, SyncTftRpc)
 
 
 # 默认连接池大小
-DEFAULT_POOL_SIZE = 10
+DEFAULT_POOL_SIZE = 1
 
 # 同步组件
 SYNC_CONN_COMPONENTS = [('mysql', SyncMysql, DEFAULT_POOL_SIZE),

@@ -22,6 +22,7 @@ DEFAULT_TIMEOUT = 5
 
 
 class IFaceWorker(CeleryTask):
+
     def on_success(self, retval, task_id, args, kwargs):
         pass
 
@@ -172,10 +173,10 @@ class Worker(Task):
         """
 
         if hasattr(self._worker_obj, 'after_return'):
-            self._worker_obj.recorder('INFO', '{obj} after return callback start'.format(obj=self))
+            self._worker_obj.recorder('DEBUG', '{obj} after return callback start'.format(obj=self))
             with timing('ms', 10) as t:
                 self._worker_obj.after_return(status, retval, task_id, args, kwargs, einfo)
-            self._worker_obj.recorder('INFO', '{obj} after return callback end -- {t}'.format(obj=self, t=t))
+            self._worker_obj.recorder('DEBUG', '{obj} after return callback end -- {t}'.format(obj=self, t=t))
 
         self._worker_obj.release()
 
