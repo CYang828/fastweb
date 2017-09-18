@@ -30,7 +30,7 @@ class Request(HTTPRequest):
                  expect_100_continue=False, decompress_response=None,
                  ssl_options=None, params=None, retry=DEFAULT_RETRY_TIME):
         if params:
-            url = '{url}?{params}'.format(url, urllib.urlencode(params))
+            url = '{url}?{params}'.format(url=url, params=urllib.urlencode(params))
         if body:
             body = urllib.urlencode(body)
         self.retry = retry
@@ -50,7 +50,7 @@ class Request(HTTPRequest):
                                       ssl_options=ssl_options)
 
     def __str__(self):
-        return '<Request {method} {url} {body}>'.format(method=self.method, url=self.url, body=self.body)
+        return '<Request {method} {url}>'.format(method=self.method, url=self.url)
 
 
 class SoapRequest(object):

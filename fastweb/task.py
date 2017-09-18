@@ -23,6 +23,10 @@ DEFAULT_TIMEOUT = 5
 
 class IFaceWorker(CeleryTask):
 
+    def __init__(self):
+        super(IFaceWorker, self).__init__()
+        self.setting = None
+
     def on_success(self, retval, task_id, args, kwargs):
         pass
 
@@ -53,6 +57,7 @@ class Worker(Task):
 
         # 设置执行任务的类
         self._task_cls = load_object(self.task_class)
+        self._setting = setting
         self._worker_obj = None
 
     def __str__(self):
@@ -64,7 +69,8 @@ class Worker(Task):
         转发给具体执行对象的run方法"""
 
         # Components中生成requestid
-        self._worker_obj = type('Worker', (self._task_cls, SyncComponents, IFaceWorker), {})()
+        self._worker_obj = type('Worker', (self._task_cls, SyncComponents, IFaceWorker), {'request': self.request})()
+        self._worker_obj.setting = self._setting
         self._worker_obj.requestid = self.request.id
 
         if hasattr(self._worker_obj, 'run'):
@@ -194,9 +200,9 @@ def start_task_worker():
 
     tasks = Manager.get_classified_components('worker')
 
-    for task in tasks:
+    for idx, task in enumerate(tasks):
         argv = sys.argv
         argv.append('-n')
-        argv.append('fastweb@celery@{app}'.format(app=task.name))
+        argv.append('fastweb@celery@{app}@{idx}'.format(app=task.name, idx=idx))
         p = Process(target=task.application.start, args=(argv,))
         p.start()

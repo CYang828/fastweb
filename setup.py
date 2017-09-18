@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 
-version = '1.4.2'
+version = '1.4.2.3'
 
 with open('README.rst') as f:
         kwargs['long_description'] = f.read()
@@ -18,7 +18,7 @@ with open('requirements.txt') as f:
 kwargs['install_requires'] = install_requires
 
 setup(
-    name='fastweb',
+    name='cli_fastweb',
     version=version,
     packages=find_packages(),
     package_data={'fastweb': ['setting/default_logging.yaml']},

@@ -63,6 +63,7 @@ class ConnectionPool(object):
           - `connection`:连接"""
 
         self._pool.put_nowait(connection)
+        self._unused_pool.append(connection)
         recorder('DEBUG',
                  '<{name}> return connection {conn}, total connections {count}'.format(name=self._name,
                                                                                        conn=connection,

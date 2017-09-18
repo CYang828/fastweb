@@ -30,7 +30,7 @@ class Task(Component, CeleryTask):
     """任务类"""
 
     eattr = {'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
-    oattr = {'timeout': int}
+    oattr = {'name': str, 'timeout': int, 'exchange_type': str}
 
     def __init__(self, setting):
         """初始化任务"""
@@ -39,8 +39,8 @@ class Task(Component, CeleryTask):
         CeleryTask.__init__(self)
 
         # 设置任务的属性
-        self.name = setting['_name']
-        exchange_type = self.setting.get('exchange_type', 'direct')
+        self.name = setting.get('name', setting['_name'])
+        self.exchange_type = setting.get('exchange_type', 'direct')
         self.timeout = self.setting.get('timeout', DEFAULT_TIMEOUT)
         rate_limit = self.setting.get('rate_limit', None)
         acks_late = self.setting.get('acks_late', None)
@@ -52,7 +52,7 @@ class Task(Component, CeleryTask):
         self.backend = app.backend
 
         # 设置任务的路由
-        queue = Queue(name=self.queue, exchange=Exchange(name=self.exchange, type=exchange_type), routing_key=self.routing_key)
+        queue = Queue(name=self.queue, exchange=Exchange(name=self.exchange, type=self.exchange_type), routing_key=self.routing_key)
         app.conf.update(task_queues=(queue,),
                         task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}},
                         task_annotations={self.name: {'rate_limit': rate_limit}},

@@ -1,26 +1,16 @@
-thrift
-tornado
 requests
 redis
-hiredis
 pymysql
 pymongo
 termcolor
 configparser
 tornado_mysql
-tormysql
-celery
-tornadis
-motor
-kombu==4.0.2
 autopep8
 subprocess32
 docopt
 ply
 pytest
 readline
-zeep
-flower
 
 
 
