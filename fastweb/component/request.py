@@ -2,14 +2,13 @@
 
 import urllib
 
-from fastweb.accesspoint import HTTPRequest
-from fastweb.accesspoint import UsernameToken
+from fastweb.accesspoint import HTTPRequest, HTTPError, UsernameToken
 
 
 DEFAULT_TIMEOUT = 5
 DEFAULT_RETRY_TIME = 3
 
-__all__ = ['UsernameToken', 'Request', 'SoapRequest']
+__all__ = ['UsernameToken', 'Request', 'SoapRequest', 'HTTPError']
 
 
 class Request(HTTPRequest):

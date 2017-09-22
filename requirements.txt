@@ -12,5 +12,15 @@ ply
 pytest
 readline
 
+kombu
+celery
+thrift
+subprocess32
+zeep
+tornado
+futures
+tornadis
+motor
+
 
 

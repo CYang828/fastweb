@@ -17,6 +17,7 @@ from tornado.httpclient import HTTPClient, AsyncHTTPClient, HTTPError, HTTPReque
 from kombu import Queue, Exchange
 from celery.exceptions import Ignore
 from celery import Task as CeleryTask, platforms, Celery, task, states
+from celery.schedules import crontab
 
 from thrift.server import TServer
 from thrift.transport import TSocket

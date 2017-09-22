@@ -1,3 +1,6 @@
+Version: 1.4.2.4
+    add: 增加task计划任务
+
 Version: 1.4.1.20
     fix: component序列化问题
 

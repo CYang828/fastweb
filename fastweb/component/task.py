@@ -2,13 +2,15 @@
 
 """任务模块"""
 
+import json
+
 import fastweb
 from fastweb.loader import app
 from fastweb.spec import torcelery
 from fastweb.util.tool import timing
 from fastweb.component import Component
 from fastweb.exception import TaskError
-from fastweb.accesspoint import CeleryTask, Celery, Queue, Exchange, coroutine, Return
+from fastweb.accesspoint import CeleryTask, Celery, Queue, Exchange, coroutine, Return, crontab
 
 from celery.loaders.base import BaseLoader
 
@@ -30,7 +32,8 @@ class Task(Component, CeleryTask):
     """任务类"""
 
     eattr = {'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
-    oattr = {'name': str, 'timeout': int, 'exchange_type': str}
+    oattr = {'name': str, 'timeout': int, 'exchange_type': str, 'minute': str, 'hour': str,
+             'day_of_week': str, 'day_of_month': str, 'month_of_year': str}
 
     def __init__(self, setting):
         """初始化任务"""
@@ -46,17 +49,37 @@ class Task(Component, CeleryTask):
         acks_late = self.setting.get('acks_late', None)
         self.requestid = None
 
+        # 定时任务
+        minute = setting.get('minute', '*')
+        hour = setting.get('hour', '*')
+        day_of_week = setting.get('day_of_week', '*')
+        day_of_month = setting.get('day_of_month', '*')
+        month_of_year = setting.get('month_of_year', '*')
+
         # 设置绑定的application的属性
         app = Celery(main=self.name, loader=TaskLoader, broker=self.broker, backend=self.backend)
         app.tasks.register(self)
         self.backend = app.backend
+
+        beat_schedule = {}
+        if minute is not '*' or hour is not '*' or day_of_week is not '*' \
+                or day_of_month is not '*' or month_of_year is not '*':
+            beat_schedule = {
+                                'timer_schedule':
+                                {
+                                    'task': self.name,
+                                    'schedule': crontab(hour=hour, minute=minute, day_of_week=day_of_week, day_of_month=day_of_month, month_of_year=month_of_year),
+                                },
+                              }
+        self.recorder('DEBUG', 'setup crontab {cron}'.format(cron=beat_schedule))
 
         # 设置任务的路由
         queue = Queue(name=self.queue, exchange=Exchange(name=self.exchange, type=self.exchange_type), routing_key=self.routing_key)
         app.conf.update(task_queues=(queue,),
                         task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}},
                         task_annotations={self.name: {'rate_limit': rate_limit}},
-                        task_acks_late=acks_late)
+                        task_acks_late=acks_late,
+                        beat_schedule=beat_schedule)
 
         # task和application绑定
         self.application = app

@@ -15,6 +15,8 @@ from fastweb.component.task import Task
 from fastweb.util.python import load_object
 from fastweb.components import SyncComponents
 from fastweb.accesspoint import CeleryTask
+from fastweb.util.log import recorder
+
 
 
 __all__ = ['start_task_worker']
@@ -205,4 +207,5 @@ def start_task_worker():
         argv.append('-n')
         argv.append('fastweb@celery@{app}@{idx}'.format(app=task.name, idx=idx))
         p = Process(target=task.application.start, args=(argv,))
+        recorder('INFO', 'fastweb@celery@{app}@{idx} worker start'.format(app=task.name, idx=idx))
         p.start()
