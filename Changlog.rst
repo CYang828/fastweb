@@ -1,3 +1,6 @@
+Version: 1.4.2.6
+    fix: 回滚1.4.2.5的修改
+
 Version: 1.4.2.5
     fix: subprocess不检检查exit code,部分shell（curl）不遵守非0即错的规范
 

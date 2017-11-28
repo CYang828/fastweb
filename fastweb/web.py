@@ -85,8 +85,13 @@ class AsynComponents(fastweb.components.Components):
                     cmd=command, time=t, e=ex, msg=result.strip() if result else error.strip()))
                 raise SubProcessError
 
-        self.recorder('INFO', 'call subprocess <{cmd}> {retcode} <{time} {msg}>'.format(
-            cmd=command, time=t, msg=result.strip() if result else error.strip(), retcode=sub_process.returncode))
+        if sub_process.returncode:
+            self.recorder('ERROR', 'call subprocess <{cmd}> <{time}> {msg}'.format(
+                cmd=command, time=t, msg=result.strip() if result else error.strip()))
+            raise SubProcessError
+
+        self.recorder('INFO', 'call subprocess <{cmd}> <{time} {msg}>'.format(
+            cmd=command, time=t, msg=result.strip() if result else error.strip()))
         raise Return((result, error))
 
     def call_celery(self, *args, **kwargs):
