@@ -1,3 +1,6 @@
+Version: 1.4.2.5
+    fix: subprocess不检检查exit code,部分shell（curl）不遵守非0即错的规范
+
 Version: 1.4.2.4
     add: 增加task计划任务
 
