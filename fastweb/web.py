@@ -16,6 +16,7 @@ import fastweb.components
 from fastweb.util.tool import timing
 from fastweb.util.thread import FThread
 from fastweb.util.python import to_plain
+from fastweb.util.tool import RetryPolicy, Retry
 from fastweb.util.log import recorder, console_recorder
 from fastweb.exception import HttpError, SubProcessError
 
@@ -27,7 +28,14 @@ class AsynComponents(fastweb.components.Components):
     """异步组件类"""
 
     @coroutine
-    def http_request(self, request):
+    def http_request(self, request, timeout=None):
+        http_retry_policy = RetryPolicy(times=request.retry, error=HttpError)
+        request.request_timeout = timeout
+        response = yield Retry(self, '{obj}'.format(obj=self), self._http_request, http_retry_policy, request).run_asyn()
+        raise Return(response)
+
+    @coroutine
+    def _http_request(self, retry, request):
         """http请求
 
         :parameter:
@@ -43,7 +51,7 @@ class AsynComponents(fastweb.components.Components):
             except HTTPError as ex:
                 self.recorder('ERROR', 'http request error {request} ({e})'.format(
                     request=request, e=ex))
-                raise HttpError
+                raise retry
 
         self.recorder('INFO', 'http request successful\t({response} <{time}>)'.format(
             response=response.code, time=t))
