@@ -8,7 +8,7 @@ kwargs = {}
 version = '1.4.2.7'
 
 with open('README.rst') as f:
-        kwargs['long_description'] = f.read()
+    kwargs['long_description'] = f.read()
 
 install_requires = []
 with open('requirements.txt') as f:
