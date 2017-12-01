@@ -1,3 +1,6 @@
+Version: 1.4.2.7
+    add: 增加异步http request的重试机制
+
 Version: 1.4.2.6
     fix: 回滚1.4.2.5的修改
 
