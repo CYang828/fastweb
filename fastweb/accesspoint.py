@@ -2,6 +2,8 @@
 
 """第三方模块接入点"""
 
+import sys
+
 import tornado
 from tornado.web import UIModule
 from tornado import web, iostream
@@ -24,7 +26,11 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TCompactProtocol
 
-from subprocess32 import Popen
+if sys.version_info > (2, 0):
+    from subprocess32 import Popen
+elif sys.version_info > (3, 0):
+    from subprocess import Popen
+
 
 from docopt import docopt
 
