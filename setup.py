@@ -8,7 +8,7 @@ kwargs = {}
 install_requires = []
 version = '1.4.2.7'
 
-if sys.version_info > (2, 0):
+if sys.version_info < (3, 0):
     with open('README.rst') as f:
         kwargs['long_description'] = f.read()
 
