@@ -26,7 +26,7 @@ from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol, TCompactProtocol
 
-if sys.version_info > (2, 0):
+if sys.version_info < (3, 0):
     from subprocess32 import Popen
 elif sys.version_info > (3, 0):
     from subprocess import Popen
