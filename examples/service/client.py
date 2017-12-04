@@ -44,20 +44,20 @@ def communicate():
 def main():
     # create an ioloop, do the above, then stop
     import time
-    import thread
+    import _thread
     start = time.time()
 
     def _thread():
         ioloop.IOLoop.current().run_sync(communicate)
 
-    for _ in xrange(5):
-        thread.start_new_thread(_thread, ())
+    for _ in range(5):
+        _thread.start_new_thread(_thread, ())
 
     while 1:
         pass
 
     end = time.time()
-    print(end-start)
+    print((end-start))
 if __name__ == "__main__":
     main()
 

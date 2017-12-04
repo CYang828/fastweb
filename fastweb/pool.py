@@ -5,9 +5,9 @@
 import json
 import copy
 from threading import Lock
-from Queue import Empty, Full, Queue
+from queue import Empty, Full, Queue
 
-from accesspoint import coroutine, ioloop, Return
+from .accesspoint import coroutine, ioloop, Return
 
 from fastweb.util.log import recorder
 from fastweb.exception import PoolError
@@ -193,7 +193,7 @@ class AsynConnectionPool(ConnectionPool):
 
         def on_reconnect(future):
             if future.exception:
-                print(future.exc_info)
+                print((future.exc_info))
 
         def on_rescue():
             recorder('INFO', '<{name}> rescue connection start'.format(name=self._name))

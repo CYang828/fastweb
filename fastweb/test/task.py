@@ -39,5 +39,5 @@ class TestSyncTask(object):
 
     def test_call_async(self):
         task = SyncTask(setting)
-        print(task.call_async((1, 2)))
+        print((task.call_async((1, 2))))
 

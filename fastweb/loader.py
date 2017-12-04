@@ -7,7 +7,7 @@
 
 import json
 
-from accesspoint import ioloop
+from .accesspoint import ioloop
 
 import fastweb.manager
 from fastweb.util.tool import timing

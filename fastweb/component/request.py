@@ -1,6 +1,6 @@
 # coding:utf8
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from fastweb.accesspoint import HTTPRequest, HTTPError, UsernameToken
 
@@ -29,9 +29,9 @@ class Request(HTTPRequest):
                  expect_100_continue=False, decompress_response=None,
                  ssl_options=None, params=None, retry=DEFAULT_RETRY_TIME):
         if params:
-            url = '{url}?{params}'.format(url=url, params=urllib.urlencode(params))
+            url = '{url}?{params}'.format(url=url, params=urllib.parse.urlencode(params))
         if body:
-            body = urllib.urlencode(body)
+            body = urllib.parse.urlencode(body)
         self.retry = retry
         super(Request, self).__init__(url, method=method, headers=headers, body=body,
                                       auth_username=auth_username, auth_password=auth_password, auth_mode=auth_mode,

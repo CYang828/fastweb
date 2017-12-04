@@ -91,7 +91,7 @@ class Components(object):
         """增加方法到对象中"""
 
         # TODO:有没有更好的加载方式
-        for callname, func in kwargs.items():
+        for callname, func in list(kwargs.items()):
             setattr(self, '{callname}'.format(callname=callname), types.MethodType(func, self))
 
     def recorder(self, level, msg):
@@ -107,7 +107,7 @@ class Components(object):
     def release(self):
         """释放组件"""
 
-        for name, component in self._components.items():
+        for name, component in list(self._components.items()):
             fastweb.manager.Manager.return_component(name, component)
             self.recorder('DEBUG', '{com} return manager'.format(com=component))
 

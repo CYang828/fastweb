@@ -7,7 +7,7 @@ import sys
 
 
 if sys.version_info < (3, 0):
-    import ConfigParser as cParser
+    import configparser as cParser
 else:
     import configparser as cParser
 

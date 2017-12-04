@@ -17,9 +17,9 @@ class Test(Api):
         #
         self.load_executor(5)
         ret = yield self.test_mysql.query('select * from entity_question limit 20;')
-        print('+++++' + str(ret))
+        print(('+++++' + str(ret)))
         #yield self.test_mysql.query('select * from user;')
-        print(self.test_mysql.fetch())
+        print((self.test_mysql.fetch()))
         #for _ in xrange(30):
         #   yield self.test_mysql.query('select * from user;')
 
@@ -40,7 +40,7 @@ class Test(Api):
         print('call task')
         yield self.test_task.call_async(args=(101, 2))
         x = yield self.test_task.call(args=(101, 2))
-        print('calculate: {}'.format(x))
+        print(('calculate: {}'.format(x)))
         self.end('SUC', log=False, **{'name': 0})
 
     @run_on_executor

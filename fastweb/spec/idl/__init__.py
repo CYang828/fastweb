@@ -73,7 +73,7 @@ Annotations
 
 .. autoclass:: Annotation
 """
-from __future__ import absolute_import, unicode_literals, print_function
+
 
 from fastweb.spec.idl.parser import Parser
 from fastweb.spec.idl.ast import (

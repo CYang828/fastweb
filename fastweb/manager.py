@@ -7,7 +7,7 @@ from collections import defaultdict
 
 import fastweb.loader
 from fastweb.util.log import recorder
-from accesspoint import coroutine
+from .accesspoint import coroutine
 from fastweb.exception import ManagerError
 from fastweb.pool import ConnectionPool, SyncConnectionPool, AsynConnectionPool
 
@@ -51,7 +51,7 @@ class Manager(object):
             for (cpre, cls) in components:
                 components = configer.get_components(cpre)
 
-                for name, value in components.items():
+                for name, value in list(components.items()):
                     config = configer.configs[name]
                     config['_name'] = value['object']
                     com = cls(config)
@@ -127,7 +127,7 @@ class SyncConnManager(Manager):
             for (cpre, cls, default_size) in SYNC_CONN_COMPONENTS:
                 components = configer.get_components(cpre)
 
-                for name, value in components.items():
+                for name, value in list(components.items()):
                     config = configer.configs[name]
                     size = config.get('size', default_size)
                     awake = config.get('awake')
@@ -157,7 +157,7 @@ class AsynConnManager(Manager):
             for (cpre, cls, default_size) in ASYN_CONN_COMPONENTS:
                 components = AsynConnManager.configer.get_components(cpre)
 
-                for name, value in components.items():
+                for name, value in list(components.items()):
                     config = AsynConnManager.configer.configs[name]
                     size = config.get('size', default_size)
                     awake = config.get('awake')

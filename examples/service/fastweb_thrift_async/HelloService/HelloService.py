@@ -38,7 +38,7 @@ class Client(Iface):
             try:
                 frame = yield self._transport.readFrame()
             except TTransport.TTransportException as e:
-                for future in self._reqs.values():
+                for future in list(self._reqs.values()):
                     future.set_exception(e)
                 self._reqs = {}
                 return
@@ -152,7 +152,7 @@ class sayHello_args(object):
 
     def __repr__(self):
         L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
+             for key, value in list(self.__dict__.items())]
         return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
 
     def __eq__(self, other):
@@ -211,7 +211,7 @@ class sayHello_result(object):
 
     def __repr__(self):
         L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.items()]
+             for key, value in list(self.__dict__.items())]
         return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
 
     def __eq__(self, other):

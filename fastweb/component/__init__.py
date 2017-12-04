@@ -115,7 +115,7 @@ class Component(object):
             else:
                 setattr(self, att, va)
 
-        for attr, tp in self.eattr.iteritems():
+        for attr, tp in self.eattr.items():
             v = self._setting.get(attr)
             _add_attr(attr, v)
             if v:
@@ -124,7 +124,7 @@ class Component(object):
                 recorder('ERROR', '<{attr}> is essential attribute of <{obj}>'.format(attr=attr, obj=self.__class__))
                 raise ConfigurationError
 
-        for attr, tp in self.oattr.iteritems():
+        for attr, tp in self.oattr.items():
             v = self._setting.get(attr)
             _add_attr(attr, v)
             if v:

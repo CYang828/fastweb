@@ -46,9 +46,9 @@ def main():
     # create an ioloop, do the above, then stop
     import time
     start = time.time()
-    for _ in xrange(10000):
+    for _ in range(10000):
         ioloop.IOLoop.current().run_sync(communicate)
     end = time.time()
-    print(end - start)
+    print((end - start))
 if __name__ == "__main__":
     main()

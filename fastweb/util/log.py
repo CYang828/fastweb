@@ -67,7 +67,7 @@ def console_recorder(level, msg):
 def set_record_color(colormap):
     """设置日志颜色"""
     global COLORMAP
-    if colormap.keys() in LOGGING_LEVEL:
+    if list(colormap.keys()) in LOGGING_LEVEL:
         COLORMAP = colormap
     else:
         recorder('CRITICAL', 'colormap invalid, please fill it like {colormap}'.format(colormap=str(COLORMAP)))
@@ -87,7 +87,7 @@ def record(level, msg, r=None, extra=None):
         logger_func = getattr(r,  'info' if level.lower() == 'important' else level.lower())
         logger_func(colored(msg, logger_color, attrs=['bold']), extra=extra)
     else:
-        print(colored(msg, logger_color, attrs=['bold']))
+        print((colored(msg, logger_color, attrs=['bold'])))
 
 
 def check_logging_level(level):

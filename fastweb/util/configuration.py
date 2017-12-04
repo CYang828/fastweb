@@ -3,7 +3,7 @@
 
 import re
 import collections
-import ConfigParser
+import configparser
 
 from fastweb.util.log import recorder
 from fastweb.util.python import to_iter
@@ -56,7 +56,7 @@ class Configuration(object):
         eattr = ['path']
         self._check_setting(eattr, setting)
         path = setting.get('path')
-        cf = ConfigParser.ConfigParser()
+        cf = configparser.ConfigParser()
         cf.read(path)
         configs = collections.defaultdict(dict)
 
@@ -124,7 +124,7 @@ class Configuration(object):
             component_exp = r'(%s):(\w*)' % component
             exp = re.compile(component_exp)
 
-            for section in self.configs.keys():
+            for section in list(self.configs.keys()):
                 match = exp.match(section)
                 if match:
                     match_components[section] = {'component': match.group(1), 'object': match.group(2)}

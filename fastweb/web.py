@@ -243,13 +243,13 @@ def arguments(convert=None, **ckargs):
     def _deco(fn):
         def _wrap(cls, *args, **kwargs):
             if convert:
-                for cname, ctype in convert.items():
+                for cname, ctype in list(convert.items()):
                     cvalue = cls.request.arguments.get(cname)
                     cvalue = to_plain(cvalue)
                     if cvalue:
                         cls.request.arguments[cname] = ctype(cvalue)
 
-            for cname, ctype in ckargs.items():
+            for cname, ctype in list(ckargs.items()):
                 cvalue = cls.request.arguments.get(cname)
                 cvalue = to_plain(cvalue)
 

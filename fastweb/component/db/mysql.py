@@ -59,7 +59,7 @@ class Mysql(Component):
             return v
 
         if isinstance(args, dict):
-            self._args = args = {k: type_convert(v) for k, v in args.items()}
+            self._args = args = {k: type_convert(v) for k, v in list(args.items())}
             self._sql = sql % args
         elif isinstance(args, tuple):
             self._args = args = tuple([type_convert(v) for v in args])

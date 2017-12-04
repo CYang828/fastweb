@@ -4,7 +4,7 @@
 
 import inspect
 
-from accesspoint import TServer, TSocket, TTransport, TCompactProtocol
+from .accesspoint import TServer, TSocket, TTransport, TCompactProtocol
 
 from fastweb import app
 from fastweb.manager import Manager
@@ -89,7 +89,7 @@ class Service(Component):
         """
 
         def process_proxy(processor):
-            for _func_name, _func in processor._processMap.items():
+            for _func_name, _func in list(processor._processMap.items()):
                 def anonymous(p, seq, ipo, opo):
                     oproc = getattr(module, 'Processor')(handler=self._handlers())
                     oproc._handler.requestid = seq if len(str(seq)) > 8 else oproc._handler.requestid
