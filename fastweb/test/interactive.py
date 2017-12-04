@@ -27,4 +27,4 @@ class HistoryConsole(code.InteractiveConsole):
 if __name__ == '__main__':
     while True:
         c = HistoryConsole().raw_input()
-        print c
+        print(c)

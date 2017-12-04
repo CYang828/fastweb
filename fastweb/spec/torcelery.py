@@ -52,5 +52,5 @@ def _on_sync_result(result, future, start_time, timeout):
         else:
             IOLoop.instance().add_callback(_on_sync_result, result, future, start_time, timeout)
     else:
-        print 'xxxx'
+        print('xxxx')
         future.set_result(None)
