@@ -15,12 +15,12 @@ from fastweb.util.thread import FThread
 
 def call_subprocess(obj):
     returncode = subprocess.call(shlex.split('ls'))
-    print 'returncode: {}'.format(returncode)
+    print('returncode: {}'.format(returncode))
 
 
 def call_subprocess_gevent():
     returncode = gevent.subprocess.call(shlex.split('ls'))
-    print returncode
+    print(returncode)
 
 
 if __name__ == '__main__':
@@ -40,6 +40,6 @@ if __name__ == '__main__':
                 pool.spawn(call_subprocess_gevent)
             pool.join()
 
-    print 'total cost: {}'.format(t)
+    print('total cost: {}'.format(t))
 
 

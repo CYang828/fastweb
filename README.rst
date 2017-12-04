@@ -74,7 +74,7 @@ Web层示例
 
             # mysql使用示例
             ret = yield self.test_mysql.query('select * from table limit 20;')
-            print self.test_mysql.fetch()
+            print(self.test_mysql.fetch())
 
             # RPC使用示例
             yield self.hello_service.sayHello()
