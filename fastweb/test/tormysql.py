@@ -14,9 +14,9 @@ def test():
             cur = conn.cursor(tornado_mysql.cursors.DictCursor)
             with timing('ms', 10) as t:
                 yield cur.execute('SELECT * FROM mysql.user;')
-            print t
+            print(t)
 
-    print 'total:'
-    print ti
+    print('total:')
+    print(ti)
 
 ioloop.IOLoop.current().run_sync(test)

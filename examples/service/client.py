@@ -57,7 +57,7 @@ def main():
         pass
 
     end = time.time()
-    print end-start
+    print(end-start)
 if __name__ == "__main__":
     main()
 

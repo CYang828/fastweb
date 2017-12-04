@@ -10,7 +10,7 @@ class HelloServiceHandler(ABLogic):
 
     def sayHello(self):
         import pdb; pdb.set_trace()
-        print 'hello'
+        print('hello')
         pass
 
 

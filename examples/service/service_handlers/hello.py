@@ -9,5 +9,5 @@ class HelloServiceHandler(ABLogic):
         # self.test_mysql.query('select * from entity_question limit 20;')
         # print self.test_mysql.fetch()
         # import pdb; pdb.Pdb().set_trace()
-        print 'sayHello'
+        print('sayHello')
         return 'hello'

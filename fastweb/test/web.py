@@ -18,7 +18,7 @@ class AsynComponentTest(unittest.TestCase):
 
         request = Request(method='GET', url='http://www.baidu.com')
         response = yield AsyncHTTPClient().fetch(request)
-        print response.body
+        print(response.body)
 
     def runTest(self):
         ioloop.IOLoop.instance().run_sync(self.do)

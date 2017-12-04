@@ -193,7 +193,7 @@ class AsynConnectionPool(ConnectionPool):
 
         def on_reconnect(future):
             if future.exception:
-                print future.exc_info
+                print(future.exc_info)
 
         def on_rescue():
             recorder('INFO', '<{name}> rescue connection start'.format(name=self._name))

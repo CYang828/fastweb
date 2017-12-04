@@ -20,11 +20,11 @@ class RetryTest(unittest.TestCase):
         policy1 = RetryPolicy(4, HelloError)
 
         def hello(time):
-            print time
+            print(time)
             raise policy
 
         def hello1(time):
-            print time
+            print(time)
             raise policy1
 
         retry = Retry('hello', hello, 1)

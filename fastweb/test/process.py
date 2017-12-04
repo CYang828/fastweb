@@ -17,7 +17,6 @@ class FProcessTest(unittest.TestCase):
     def runTest(self):
         process = FProcess(name='test', task=self.task)
         process.start()
-        print 111111
         process.stop()
 
 
