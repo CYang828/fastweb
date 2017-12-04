@@ -2,6 +2,7 @@
 
 """第三方模块接入点"""
 
+import os
 import sys
 
 import tornado
@@ -28,9 +29,8 @@ from thrift.protocol import TBinaryProtocol, TCompactProtocol
 
 if sys.version_info < (3, 0):
     from subprocess32 import Popen
-elif sys.version_info > (3, 0):
+else:
     from subprocess import Popen
-
 
 from docopt import docopt
 
