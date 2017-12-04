@@ -22,7 +22,7 @@ from tornado import ioloop
 def communicate():
     # create client
     transport = TTornado.TTornadoStreamTransport('localhost', 9999)
-    # open the transport, bail on error
+    # open the transpo40.163rt, bail on error
     try:
         yield transport.open()
         print('Transport is opened')

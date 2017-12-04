@@ -1,3 +1,6 @@
+Version 1.5.0.0:
+    update: 增加对py3和win平台的适配
+
 Version: 1.4.2.7
     add: 增加异步http request的重试机制
 
