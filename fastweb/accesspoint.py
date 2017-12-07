@@ -29,8 +29,10 @@ from thrift.protocol import TBinaryProtocol, TCompactProtocol
 
 if sys.version_info < (3, 0):
     from subprocess32 import Popen
+    from Queue import Queue, Empty, Full
 else:
     from subprocess import Popen
+    from queue import Empty, Full, Queue
 
 from docopt import docopt
 

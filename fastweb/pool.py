@@ -3,9 +3,8 @@
 """连接池模块"""
 
 import json
-import copy
 from threading import Lock
-from queue import Empty, Full, Queue
+from accesspoint import Queue, Empty, Full
 
 from .accesspoint import coroutine, ioloop, Return
 
