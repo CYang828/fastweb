@@ -10,7 +10,7 @@ from fastweb.spec import torcelery
 from fastweb.util.tool import timing
 from fastweb.component import Component
 from fastweb.exception import TaskError
-from fastweb.accesspoint import CeleryTask, Celery, Queue, Exchange, coroutine, Return, crontab
+from fastweb.accesspoint import CeleryTask, Celery, RMQueue, Exchange, coroutine, Return, crontab
 
 from celery.loaders.base import BaseLoader
 
