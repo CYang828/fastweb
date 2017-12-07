@@ -4,7 +4,6 @@
 
 import json
 from threading import Lock
-from accesspoint import Queue, Empty, Full
 
 from fastweb.util.log import recorder
 from fastweb.exception import PoolError
