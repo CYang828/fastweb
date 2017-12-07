@@ -74,7 +74,7 @@ class Task(Component, CeleryTask):
         self.recorder('DEBUG', 'setup crontab {cron}'.format(cron=beat_schedule))
 
         # 设置任务的路由
-        queue = Queue(name=self.queue, exchange=Exchange(name=self.exchange, type=self.exchange_type), routing_key=self.routing_key)
+        queue = RMQueue(name=self.queue, exchange=Exchange(name=self.exchange, type=self.exchange_type), routing_key=self.routing_key)
         app.conf.update(task_queues=(queue,),
                         task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}},
                         task_annotations={self.name: {'rate_limit': rate_limit}},
