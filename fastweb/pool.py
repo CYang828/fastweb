@@ -6,11 +6,10 @@ import json
 from threading import Lock
 from accesspoint import Queue, Empty, Full
 
-from .accesspoint import coroutine, ioloop, Return
-
 from fastweb.util.log import recorder
 from fastweb.exception import PoolError
 from fastweb.util.thread import FThread
+from fastweb.accesspoint import coroutine, ioloop, Return
 
 DEFAULT_TIMEOUT = 50000
 DEFAULT_MAXCONN = 100
