@@ -10,7 +10,7 @@ from tornado.web import UIModule
 from tornado import web, iostream
 from tornado.ioloop import IOLoop
 from tornado.locks import Condition
-from tornado.options import options
+from tornado.options import options, define
 from tornado.process import Subprocess
 from tornado.concurrent import run_on_executor, TracebackFuture
 from tornado import gen, web, httpserver, ioloop

@@ -21,7 +21,7 @@ from fastweb.util.log import recorder, console_recorder
 from fastweb.exception import HttpError, SubProcessError
 
 
-__all__ = ['Api', 'Page', 'arguments', 'start_web_server']
+__all__ = ['Api', 'Page', 'arguments', 'options', 'start_web_server']
 
 
 class AsynComponents(fastweb.components.Components):
