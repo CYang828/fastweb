@@ -3,6 +3,7 @@
 import time
 
 from fastweb.web import Api, Page
+from fastweb.exception import HttpError
 from fastweb.component.request import Request
 from fastweb.web import coroutine, run_on_executor
 
@@ -12,6 +13,7 @@ class Test(Api):
     @coroutine
     #@checkArgument(name=str, sex=int)
     def get(self):
+        """
         #self.test_mongo.select('resource', 'mongo_question_json')
         #doc = yield self.test_mongo.find_one(limit=1)
         #
@@ -41,6 +43,14 @@ class Test(Api):
         yield self.test_task.call_async(args=(101, 2))
         x = yield self.test_task.call(args=(101, 2))
         print(('calculate: {}'.format(x)))
+        """
+        try:
+            request = Request(method='GET', url='http://rw.okjiaoyu.cn/rw_0036a751376baf1ffd4fad61ffff.ppt')
+            yield self.http_request(request)
+        except HttpError as e:
+            print('http error: {e}'.format(e=type(e)))
+            self.end(status_code=404)
+            return
         self.end('SUC', log=False, **{'name': 0})
 
     @run_on_executor
