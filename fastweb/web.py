@@ -166,9 +166,9 @@ class Api(web.RequestHandler, AsynComponents):
         # 更改错误码
         if status_code:
             self.write_error(status_code=status_code)
-
-        self.write(json.dumps(ret))
-        self.finish()
+        else:
+            self.write(json.dumps(ret))
+            self.finish()
         self.release()
         t = (self.request._finish_time-self.request._start_time) * 1000
 
