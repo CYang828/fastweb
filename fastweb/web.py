@@ -167,6 +167,7 @@ class Api(web.RequestHandler, AsynComponents):
         if status_code:
             self.write_error(status_code=status_code)
         else:
+            status_code = 200
             self.write(json.dumps(ret))
             self.finish()
         self.release()
@@ -175,12 +176,12 @@ class Api(web.RequestHandler, AsynComponents):
         if log:
             self.recorder(
                 'IMPORTANT',
-                'Api response\nResponse:<{ret}>\nTime:<{time}ms>'.format(
-                    ret=ret, time=t))
+                'Api response\nStatusCode:{sc}\nResponse:<{ret}>\nTime:<{time}ms>'.format(
+                    ret=ret, time=t, sc=status_code))
         else:
             self.recorder(
                 'IMPORTANT',
-                'Api response\nTime:<{time}ms>'.format(time=t))
+                'Api response\nStatusCode:{sc}\nTime:<{time}ms>'.format(time=t, sc=status_code))
 
 
 class Page(web.RequestHandler, AsynComponents):
