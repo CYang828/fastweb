@@ -50,8 +50,11 @@ class Test(Api):
         except HttpError as e:
             print('http error: {e}'.format(e=type(e)))
             self.end(status_code=404)
+            print('????')
             return
+
         self.end('SUC', log=False, **{'name': 0})
+        return
 
     @run_on_executor
     def test_executor(self):
