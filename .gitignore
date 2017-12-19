@@ -10,3 +10,4 @@ fastweb.egg-info/
 *.rdb
 docs/_build
 .cache
+*.bak
