@@ -1,3 +1,6 @@
+Version 1.5.0.8:
+    update: api接口增加status_code参数，允许更改返回错误码
+
 Version 1.5.0.0:
     update: 增加对py3和win平台的适配
 

@@ -157,11 +157,16 @@ class Api(web.RequestHandler, AsynComponents):
         self.recorder('INFO', 'set header <{key}:{type}>'.format(
             key=header, type='text/json'))
 
-    def end(self, code='SUC', log=True, **kwargs):
+    def end(self, code='SUC', status_code=None, log=True, **kwargs):
         """请求结束"""
 
         ret = self.errcode[code]
         ret = dict(ret, **kwargs)
+
+        # 更改错误码
+        if status_code:
+            self.write_error(status_code=status_code)
+
         self.write(json.dumps(ret))
         self.finish()
         self.release()
