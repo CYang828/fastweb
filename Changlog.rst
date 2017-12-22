@@ -1,3 +1,6 @@
+Version 1.5.0.13:
+    update: 设置默认异步http客户端为curl
+
 Version 1.5.0.8:
     update: api接口增加status_code参数，允许更改返回错误码
 
