@@ -45,8 +45,9 @@ class Test(Api):
         print(('calculate: {}'.format(x)))
         """
         try:
-            request = Request(method='GET', url='http://rw.okjiaoyu.cn/rw_0036a751376baf1ffd4fad61ffff.ppt')
-            yield self.http_request(request)
+            request = Request(method='GET', url='http://rw.okjiaoyu.cn/rw_0036a751376baf1ffd4fad61.ppt')
+            r = yield self.http_request(request)
+            print(r)
         except HttpError as e:
             print('http error: {e}'.format(e=type(e)))
             self.end(status_code=404)
@@ -55,6 +56,9 @@ class Test(Api):
 
         self.end('SUC', log=False, **{'name': 0})
         return
+
+    def on_chunk(self):
+        print('on chunk')
 
     @run_on_executor
     def test_executor(self):
