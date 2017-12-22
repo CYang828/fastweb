@@ -41,8 +41,8 @@ class Loader(object):
         # 日志是否被设置过
         self.bRecorder = False
 
-        # 设置默认的下载器为curl
-        AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
+        # 增加最大数据量
+        AsyncHTTPClient.configure(None, max_body_size=1000000000)
 
     def load_recorder(self, application_log_path=DEFAULT_APP_LOG_PATH, system_log_path=DEFAULT_SYS_LOG_PATH, logging_setting=None,
                       application_level='DEBUG', system_level='DEBUG', logging_colormap=None):
