@@ -148,7 +148,7 @@ class SyncComponents(Components):
                 _recorder('ERROR', 'http request error {request} {e}'.format(request=request, e=ex))
                 raise retry
 
-        _recorder('INFO', 'http request successful\n{response} -- {time}'.format(response=response.code, time=t))
+        _recorder('INFO', 'http request successful\n{response} -- {time}'.format(response=response.status_code, time=t))
         return response
 
     def call_subprocess(self, command, stdin_data=None, timeout=None):
