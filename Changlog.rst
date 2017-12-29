@@ -1,3 +1,6 @@
+Version:1.5.0.15:
+    update: 异步http请求改用requests库
+
 Version 1.5.0.13:
     update: 设置默认异步http客户端为curl
 

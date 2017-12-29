@@ -43,3 +43,6 @@ from zeep import CachingClient
 from zeep.exceptions import Error
 from zeep.wsse.username import UsernameToken
 from zeep.transports import Transport
+
+import requests
+from requests.exceptions import HTTPError as RequestHTTPError

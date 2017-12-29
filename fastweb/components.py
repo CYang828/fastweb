@@ -11,9 +11,10 @@ from concurrent.futures import ThreadPoolExecutor
 import fastweb.manager
 from fastweb import app
 from fastweb.compat import subprocess
+from fastweb.spec.req import HttpClient
 from fastweb.util.log import record, recorder
 from fastweb.util.tool import uniqueid, timing, RetryPolicy, Retry
-from fastweb.accesspoint import HTTPClient, CachingClient, UsernameToken, Error, Transport
+from fastweb.accesspoint import CachingClient, UsernameToken, Error, Transport, RequestHTTPError
 from fastweb.exception import ComponentError, SubProcessError, SubProcessTimeoutError, HttpError, SoapError
 
 
@@ -142,8 +143,8 @@ class SyncComponents(Components):
 
         with timing('ms', 10) as t:
             try:
-                response = HTTPClient().fetch(request)
-            except HttpError as ex:
+                response = HttpClient().fetch(request)
+            except RequestHTTPError as ex:
                 _recorder('ERROR', 'http request error {request} {e}'.format(request=request, e=ex))
                 raise retry
 

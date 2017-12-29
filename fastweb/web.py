@@ -28,14 +28,14 @@ class AsynComponents(fastweb.components.Components):
     """异步组件类"""
 
     @coroutine
-    def http_request(self, request, callback=None, timeout=None):
+    def http_request(self, request, timeout=None):
         http_retry_policy = RetryPolicy(times=request.retry, error=HttpError)
         request.request_timeout = timeout
-        response = yield Retry(self, '{obj}'.format(obj=self), self._http_request, http_retry_policy, request, callback).run_asyn()
+        response = yield Retry(self, '{obj}'.format(obj=self), self._http_request, http_retry_policy, request).run_asyn()
         raise Return(response)
 
     @coroutine
-    def _http_request(self, retry, request, callback):
+    def _http_request(self, retry, request):
         """http请求
 
         :parameter:
@@ -47,7 +47,7 @@ class AsynComponents(fastweb.components.Components):
 
         with timing('ms', 10) as t:
             try:
-                response = yield AsyncHTTPClient().fetch(request, callback)
+                response = yield AsyncHTTPClient().fetch(request)
             except HTTPError as ex:
                 self.recorder('ERROR', 'http request error {request} ({e})'.format(
                     request=request, e=ex))
