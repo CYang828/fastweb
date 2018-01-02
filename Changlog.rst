@@ -1,3 +1,6 @@
+Version:1.5.0.18
+    fix: 异步redis增加断开重连机制
+
 Version:1.5.0.15:
     update: 异步http请求改用requests库
 

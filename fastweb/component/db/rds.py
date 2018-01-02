@@ -134,6 +134,8 @@ class AsynRedis(Redis):
             cmd = shlex.split(command)
             self.recorder('INFO', '{obj} query start\nCommand: {cmd}'.format(obj=self, cmd=command))
             with tool.timing('s', 10) as t:
+                if not self._client.is_connected():
+                    yield self.connect()
                 response = yield self._client.call(*cmd)
             self.recorder('INFO', '{obj} query success\nCommand: {cmd}\nResponse: {res} -- {time}'.format(obj=self,
                                                                                                           cmd=command,
