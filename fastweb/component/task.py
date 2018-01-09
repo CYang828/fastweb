@@ -48,6 +48,8 @@ class Task(Component, CeleryTask):
         rate_limit = self.setting.get('rate_limit', None)
         acks_late = self.setting.get('acks_late', None)
         self.requestid = None
+        # 设置跟踪任务启动状态，为了让异步访问时可以准确知道任务被执行了
+        self.track_started = True
 
         # 定时任务
         minute = setting.get('minute', '*')

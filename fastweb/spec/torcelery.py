@@ -39,7 +39,7 @@ def sync(task, timeout, *args, **kwargs):
 
 
 def _on_async_result(result, future):
-    if result.state == states.PENDING:
+    if result.state == states.STARTED:
         future.set_result(result.task_id)
     else:
         IOLoop.instance().add_callback(_on_async_result, result, future)
