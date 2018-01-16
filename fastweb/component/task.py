@@ -189,6 +189,6 @@ class AsynTask(Task):
 
         self.recorder('INFO', 'synchronize call {obj} successful\n'
                               'Return:{ret} -- {t}'.format(obj=self,
-                                                                                         ret=result,
-                                                                                         t=t))
+                                                           ret=result,
+                                                           t=t))
         raise Return(result)
