@@ -1,7 +1,6 @@
 # coding:utf8
 
-from urllib.parse import unquote
-
+from fastweb.compat import unquote
 from fastweb.accesspoint import requests
 
 

@@ -1,3 +1,7 @@
+
+Vsersion:1.5.0.21
+    fix: urllib兼容性问题
+
 Version:1.5.0.19
     fix: 修复异步执行celery任务时无法确定任务是否被执行的问题
     fix: 修复任务执行时设置tracking_started属性

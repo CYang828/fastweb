@@ -47,7 +47,7 @@ def _on_async_result(result, future):
 
 def _on_sync_result(result, future, start_time, timeout):
     if IOLoop.instance().time()-start_time < timeout:
-        if result.state == states.SUCCESS:
+        if result.ready():
             future.set_result(result.result)
         else:
             IOLoop.instance().add_callback(_on_sync_result, result, future, start_time, timeout)
