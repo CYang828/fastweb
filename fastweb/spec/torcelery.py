@@ -2,7 +2,7 @@
 
 """tornado调用celery模块"""
 
-from fastweb.accesspoint import states, IOLoop, TracebackFuture
+from fastweb.accesspoint import states, IOLoop, Future
 
 
 def async(task, *args, **kwargs):
@@ -10,7 +10,7 @@ def async(task, *args, **kwargs):
 
     异步给celery发送命令时，任务的状态为PENDING则视为成功，将任务的taskid返回"""
 
-    future = TracebackFuture()
+    future = Future()
     callback = kwargs.pop("callback", None)
     if callback:
         IOLoop.instance().add_future(future, lambda f: callback(f.result()))
@@ -29,7 +29,7 @@ def sync(task, timeout, *args, **kwargs):
       - `timeout`: 超时时间
     """
 
-    future = TracebackFuture()
+    future = Future()
     callback = kwargs.pop("callback", None)
     if callback:
         IOLoop.instance().add_future(future, lambda f: callback(f.result()))

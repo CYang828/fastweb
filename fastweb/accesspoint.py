@@ -12,7 +12,7 @@ from tornado.ioloop import IOLoop
 from tornado.locks import Condition
 from tornado.options import options, define
 from tornado.process import Subprocess
-from tornado.concurrent import run_on_executor, TracebackFuture
+from tornado.concurrent import run_on_executor, Future
 from tornado import gen, web, httpserver, ioloop
 from tornado.gen import coroutine, Return, Task, sleep
 from tornado.httpclient import HTTPClient, AsyncHTTPClient, HTTPError, HTTPRequest

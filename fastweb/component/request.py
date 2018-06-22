@@ -1,6 +1,6 @@
 # coding:utf8
 
-from  fastweb.compat import urlencode
+from fastweb.compat import urlencode
 from fastweb.accesspoint import HTTPRequest, HTTPError, UsernameToken
 
 

@@ -1,3 +1,5 @@
+Version:1.6.0.0
+    fix: 更新支持最新tornado==5.x
 
 Vsersion:1.5.0.21
     fix: urllib兼容性问题
