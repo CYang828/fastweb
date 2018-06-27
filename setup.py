@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 install_requires = []
-version = '1.6.0.0'
+version = '1.6.0.1'
 
 if sys.version_info < (3, 0):
     with open('README.rst') as f:

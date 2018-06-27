@@ -9,7 +9,8 @@ import subprocess
 
 
 from fastweb.accesspoint import (web, coroutine, Task, Return, options,
-                                 AsyncHTTPClient, HTTPError, Subprocess, httpserver, ioloop, run_on_executor)
+                                 AsyncHTTPClient, HTTPError, Subprocess,
+                                 httpserver, ioloop, run_on_executor, StaticFileHandler)
 
 from fastweb import app
 import fastweb.components
@@ -21,7 +22,8 @@ from fastweb.util.log import recorder, console_recorder
 from fastweb.exception import HttpError, SubProcessError
 
 
-__all__ = ['Api', 'Page', 'arguments', 'options', 'start_web_server']
+__all__ = ['Api', 'Page', 'arguments', 'options', 'start_web_server', 'run_on_executor', 'StaticFileHandler',
+           'coroutine', 'AsynComponents']
 
 
 class AsynComponents(fastweb.components.Components):

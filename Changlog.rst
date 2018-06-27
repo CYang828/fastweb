@@ -1,3 +1,7 @@
+Version:1.6.0.1
+    fix: 修复to_plain错误
+
+
 Version:1.6.0.0
     fix: 更新支持最新tornado==5.x
 

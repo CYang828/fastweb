@@ -67,7 +67,7 @@ def to_plain(i):
             plain += "{key}:{value}".format(key=key, value=value)
         return plain
     elif isinstance(i, (list, set)):
-        return ','.join(i)
+        return ','.join([a.decode() for a in i])
     else:
         return i
 

@@ -6,7 +6,7 @@ import os
 import sys
 
 import tornado
-from tornado.web import UIModule
+from tornado.web import UIModule, StaticFileHandler
 from tornado import web, iostream
 from tornado.ioloop import IOLoop
 from tornado.locks import Condition
