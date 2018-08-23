@@ -16,6 +16,7 @@ load component + filter
 22 不通过thrift来手动生成thrift hub，而是通过框架自动生成
 23 service 的加载方式不是很好（可以更简单）
 24 task 的加载方式不是很好（可以更易懂）
+25 mysql到redis的自动缓存（目前都是业务层做的）
 
 
 ♦︎ 连接池初始化后，中途mysql连接断开reconnect时增加超时时间，防止请求时长时间不返回

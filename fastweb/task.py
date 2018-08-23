@@ -17,8 +17,6 @@ from fastweb.components import SyncComponents
 from fastweb.accesspoint import CeleryTask
 from fastweb.util.log import recorder
 
-
-
 __all__ = ['start_task_worker']
 DEFAULT_TIMEOUT = 5
 

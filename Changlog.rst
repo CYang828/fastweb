@@ -1,3 +1,7 @@
+Version:1.6.0.2
+    add: 增加异步redis的返回值解析
+
+
 Version:1.6.0.1
     fix: 修复to_plain错误
 

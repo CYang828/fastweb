@@ -13,8 +13,8 @@ kombu
 celery
 thrift
 zeep
-tornado
-tornadis
+tornado==5.0.2
+tornadis==0.8.1
 motor
 
 

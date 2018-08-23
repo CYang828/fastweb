@@ -265,7 +265,7 @@ def arguments(convert=None, **ckargs):
                     diff = set(cls.request.arguments.keys()).symmetric_difference(set(ckargs.keys()))
                     cls.recorder('error', 'check arguments invalid <{diff}> {msg}'.format(
                         msg=msg, diff=to_plain(diff)))
-                    cls.end('SVR')
+                    cls.end('ARG')
 
                 if cvalue:
                     if ctype is int:

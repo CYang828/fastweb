@@ -67,7 +67,7 @@ def to_plain(i):
             plain += "{key}:{value}".format(key=key, value=value)
         return plain
     elif isinstance(i, (list, set)):
-        return ','.join([a.decode() for a in i])
+        return ','.join([utf8(a) for a in i])
     else:
         return i
 
@@ -182,6 +182,74 @@ def guess_type(v):
         return int(v)
     else:
         return str(v)
+
+
+def utf8(d):
+    if isinstance(d, bytes):
+        return d.decode('utf-8')
+    if isinstance(d, dict):
+        return dict(map(utf8, d.items()))
+    if isinstance(d, tuple):
+        return map(utf8, d)
+    return d
+
+
+def list2dict(l):
+    return dict(zip(l[0::2], l[1::2]))
+
+
+def dict2list(d):
+    l = []
+    for k, v in zip(d.keys(), d.values()):
+        l.append(str(k))
+        l.append("'" + str(v) + "'")
+    return l
+
+
+def list2sequence(l):
+    s = ''
+    for idx, i in enumerate(l):
+        if isinstance(i, dict):
+           i = '"' + dict2sequence(i) + '"'
+        s += str(i)
+        if idx != len(l) - 1:
+            s += ' '
+    return s
+
+
+def dict2sequence(d):
+    return ' '.join(dict2list(d))
+
+
+def sequence2dict(s):
+    return list2dict(sequence2list(utf8(s)))
+
+
+def sequence2list(s):
+    l = []
+    lv = ''
+    fs = False
+
+    for w in s:
+        if w == "'" and not fs:
+            fs = True
+            continue
+        elif w == "'" and fs:
+            fs = False
+            lv and l.append(lv)
+            lv = ''
+            continue
+        elif w == ' ' and not fs:
+            lv and l.append(lv)
+            lv = ''
+            continue
+        lv += w
+    return l
+
+
+
+
+
 
 
 

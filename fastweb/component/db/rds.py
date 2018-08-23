@@ -10,9 +10,9 @@ from redis.exceptions import ConnectionError, TimeoutError, ResponseError
 from fastweb.accesspoint import coroutine, Return
 
 import fastweb.util.tool as tool
+import fastweb.util.python as py
 from fastweb.exception import RedisError
 from fastweb.component import Component
-
 
 DEFAULT_DB = 0
 DEFAULT_PORT = 6379
@@ -35,9 +35,9 @@ class Redis(Component):
         super(Redis, self).__init__(setting)
 
         self._client = None
+        self._command = None
 
-    @staticmethod
-    def _parse_response(response):
+    def _parse_response(self, response):
         """解析response"""
 
         if response == 'OK':
@@ -45,6 +45,11 @@ class Redis(Component):
         elif isinstance(response, tornadis.ClientError):
             raise RedisError(response)
         else:
+            # TODO: 根据不同类型的命令解析返回值
+            if self._command in ('HGETALL', ):
+                response = py.utf8(py.list2dict(response))
+            if self._command in ('LRANGE', ):
+                response = [py.sequence2dict(i) for i in response]
             return response
 
     def reconnect(self):
@@ -52,6 +57,9 @@ class Redis(Component):
 
     def ping(self):
         pass
+
+    def _parse_command(self, command):
+        self._command = py.sequence2list(command)[0].upper()
 
 
 class SyncRedis(Redis):
@@ -83,6 +91,7 @@ class SyncRedis(Redis):
            TimeoutError可能是连接不通"""
 
         try:
+            self._parse_command(command)
             cmd = shlex.split(command)
             self.recorder('INFO', '{obj} query start\n{cmd}'.format(obj=self, cmd=command))
             with tool.timing('s', 10) as t:
@@ -131,6 +140,7 @@ class AsynRedis(Redis):
         """执行redis命令"""
 
         try:
+            self._parse_command(command)
             cmd = shlex.split(command)
             self.recorder('INFO', '{obj} query start\nCommand: {cmd}'.format(obj=self, cmd=command))
             with tool.timing('s', 10) as t:
@@ -146,5 +156,3 @@ class AsynRedis(Redis):
             raise RedisError
 
         raise Return(self._parse_response(response))
-
-
