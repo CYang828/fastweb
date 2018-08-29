@@ -1,3 +1,9 @@
+Version:1.6.0.3
+    fix: 修复收到没有user-agent的请求
+    add: 同步http请求增加post json功能
+    add: 增加worker可配置并行大小
+
+
 Version:1.6.0.2
     add: 增加异步redis的返回值解析
 

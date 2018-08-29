@@ -10,7 +10,7 @@ docopt
 ply
 pytest
 kombu
-celery
+celery==4.2.0
 thrift
 zeep
 tornado==5.0.2

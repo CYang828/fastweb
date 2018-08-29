@@ -33,7 +33,7 @@ class Task(Component, CeleryTask):
 
     eattr = {'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
     oattr = {'name': str, 'timeout': int, 'exchange_type': str, 'minute': str, 'hour': str,
-             'day_of_week': str, 'day_of_month': str, 'month_of_year': str}
+             'day_of_week': str, 'day_of_month': str, 'month_of_year': str, 'concurrency': int}
 
     def __init__(self, setting):
         """初始化任务"""
@@ -81,7 +81,8 @@ class Task(Component, CeleryTask):
                         task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}},
                         task_annotations={self.name: {'rate_limit': rate_limit}},
                         task_acks_late=acks_late,
-                        beat_schedule=beat_schedule)
+                        beat_schedule=beat_schedule,
+                        worker_concurrency=setting.get('concurrency', 1))
 
         # task和application绑定
         self.application = app

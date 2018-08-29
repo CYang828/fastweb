@@ -128,7 +128,7 @@ class Api(web.RequestHandler, AsynComponents):
                 host=self.host,
                 uri=self.uri,
                 arguments=self.request.body,
-                ua=self.request.headers['User-Agent']))
+                ua=self.request.headers.get('User-Agent', 'Fastweb')))
         self.set_header_json()
 
     def data_received(self, chunk):

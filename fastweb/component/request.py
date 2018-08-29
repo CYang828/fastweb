@@ -26,11 +26,12 @@ class Request(HTTPRequest):
                  allow_ipv6=None,
                  client_key=None, client_cert=None, body_producer=None,
                  expect_100_continue=False, decompress_response=None,
-                 ssl_options=None, params=None, retry=DEFAULT_RETRY_TIME):
+                 ssl_options=None, params=None, retry=DEFAULT_RETRY_TIME, json=None):
         if params:
             url = '{url}?{params}'.format(url=url, params=urlencode(params))
         if body:
             body = urlencode(body)
+        self.json = json
         self.retry = retry
         super(Request, self).__init__(url, method=method, headers=headers, body=body,
                                       auth_username=auth_username, auth_password=auth_password, auth_mode=auth_mode,
