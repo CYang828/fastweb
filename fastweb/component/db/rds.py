@@ -96,7 +96,7 @@ class SyncRedis(Redis):
             self.recorder('INFO', '{obj} query start\n{cmd}'.format(obj=self, cmd=command))
             with tool.timing('s', 10) as t:
                 response = self._client.execute_command(*cmd)
-            self.recorder('INFO', '{obj} query successful\n{cmd} -- {time}'.format(obj=self, cmd=command, time=t))
+            self.recorder('INFO', '{obj} query successful\n{cmd} -- {time}'.format(obj=self, cmd=py.utf8(command), time=t))
         except (ConnectionError, TimeoutError) as e:
             # redis内部对这两种异常进行了重试操作
             self.recorder('ERROR', '{obj} connection error [{msg}]'.format(obj=self, msg=e))
@@ -148,8 +148,8 @@ class AsynRedis(Redis):
                     yield self.connect()
                 response = yield self._client.call(*cmd)
             self.recorder('INFO', '{obj} query success\nCommand: {cmd}\nResponse: {res} -- {time}'.format(obj=self,
-                                                                                                          cmd=command,
-                                                                                                          res=response,
+                                                                                                          cmd=py.utf8(command),
+                                                                                                          res=py.utf8(response),
                                                                                                           time=t))
         except torConnectionError as e:
             self.recorder('ERROR', '{obj} connection error [{msg}]'.format(obj=self, msg=e))

@@ -18,7 +18,7 @@ from fastweb.accesspoint import CachingClient, UsernameToken, Error, Transport, 
 from fastweb.exception import ComponentError, SubProcessError, SubProcessTimeoutError, HttpError, SoapError
 
 
-__all__ = ['UsernameToken']
+__all__ = ['UsernameToken', 'Components']
 
 
 class Components(object):
