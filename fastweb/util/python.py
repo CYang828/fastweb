@@ -195,6 +195,10 @@ def utf8(d):
 
 
 def list2dict(l):
+    for idx, v in enumerate(l):
+        if v.isdigit():
+            l[idx] = int(v)
+
     return dict(zip(l[0::2], l[1::2]))
 
 
@@ -222,7 +226,11 @@ def dict2sequence(d):
 
 
 def sequence2dict(s):
-    return list2dict(sequence2list(utf8(s)))
+    sq = sequence2list(utf8(s))
+    if isinstance(sq, list):
+        return list2dict(sq)
+    elif isinstance(sq, str):
+        return sq
 
 
 def sequence2list(s):
@@ -231,6 +239,7 @@ def sequence2list(s):
     fs = False
 
     for w in s:
+        w = utf8(w)
         if w == "'" and not fs:
             fs = True
             continue
@@ -244,7 +253,10 @@ def sequence2list(s):
             lv = ''
             continue
         lv += w
-    return l
+    if len(l) // 2 == 0:
+        return l
+    else:
+        return s
 
 
 

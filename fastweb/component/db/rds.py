@@ -48,9 +48,9 @@ class Redis(Component):
             # TODO: 根据不同类型的命令解析返回值
             if self._command in ('HGETALL', ):
                 response = py.utf8(py.list2dict(response))
-            if self._command in ('LRANGE', ):
+            elif self._command in ('LRANGE', ):
                 response = [py.sequence2dict(i) for i in response]
-            return response
+            return py.utf8(response)
 
     def reconnect(self):
         pass
@@ -96,6 +96,7 @@ class SyncRedis(Redis):
             self.recorder('INFO', '{obj} query start\n{cmd}'.format(obj=self, cmd=command))
             with tool.timing('s', 10) as t:
                 response = self._client.execute_command(*cmd)
+            response = self._parse_response(response)
             self.recorder('INFO', '{obj} query successful\n{cmd} -- {time}'.format(obj=self, cmd=py.utf8(command), time=t))
         except (ConnectionError, TimeoutError) as e:
             # redis内部对这两种异常进行了重试操作
@@ -105,7 +106,7 @@ class SyncRedis(Redis):
             self.recorder('ERROR', '{obj} query error [{msg}]'.format(obj=self, msg=e))
             raise RedisError
 
-        return self._parse_response(response)
+        return response
 
 
 class AsynRedis(Redis):
@@ -147,6 +148,7 @@ class AsynRedis(Redis):
                 if not self._client.is_connected():
                     yield self.connect()
                 response = yield self._client.call(*cmd)
+            response = self._parse_response(response)
             self.recorder('INFO', '{obj} query success\nCommand: {cmd}\nResponse: {res} -- {time}'.format(obj=self,
                                                                                                           cmd=py.utf8(command),
                                                                                                           res=py.utf8(response),
@@ -155,4 +157,4 @@ class AsynRedis(Redis):
             self.recorder('ERROR', '{obj} connection error [{msg}]'.format(obj=self, msg=e))
             raise RedisError
 
-        raise Return(self._parse_response(response))
+        raise Return(response)
