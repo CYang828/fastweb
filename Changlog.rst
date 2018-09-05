@@ -1,3 +1,7 @@
+Version:1.6.0.5
+    fix: 修改redis返回值解析错误
+
+
 Version:1.6.0.4
     add：增加flower监控
     add: 增加异步cache装饰器，注意如果被装饰的函数需要用的coroutine，需要最后使用coroutine装饰器

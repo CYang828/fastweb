@@ -227,10 +227,11 @@ def dict2sequence(d):
 
 def sequence2dict(s):
     sq = sequence2list(utf8(s))
-    if isinstance(sq, list):
+
+    if len(sq) == 1:
+        return s
+    else:
         return list2dict(sq)
-    elif isinstance(sq, str):
-        return sq
 
 
 def sequence2list(s):
@@ -253,10 +254,7 @@ def sequence2list(s):
             lv = ''
             continue
         lv += w
-    if len(l) // 2 == 0:
-        return l
-    else:
-        return s
+    return l
 
 
 

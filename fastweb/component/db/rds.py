@@ -45,6 +45,7 @@ class Redis(Component):
         elif isinstance(response, tornadis.ClientError):
             raise RedisError(response)
         else:
+            print(self._command)
             # TODO: 根据不同类型的命令解析返回值
             if self._command in ('HGETALL', ):
                 response = py.utf8(py.list2dict(response))
