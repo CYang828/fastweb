@@ -256,6 +256,9 @@ def arguments(convert=None, **ckargs):
                     cvalue = to_plain(cvalue)
                     if cvalue:
                         cls.request.arguments[cname] = ctype(cvalue)
+                    else:
+                        if cvalue is not None:
+                            del cls.request.arguments[cname]
 
             for cname, ctype in list(ckargs.items()):
                 cvalue = cls.request.arguments.get(cname)
@@ -270,6 +273,12 @@ def arguments(convert=None, **ckargs):
                 if cvalue:
                     if ctype is int:
                         if not cvalue.isdigit():
+                            invalid_recorder('argument type error')
+                            return
+                    elif ctype is float:
+                        try:
+                            cvalue = eval(cvalue)
+                        except NameError:
                             invalid_recorder('argument type error')
                             return
                     elif not isinstance(cvalue, ctype):
