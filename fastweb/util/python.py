@@ -246,7 +246,7 @@ def sequence2list(s):
             continue
         elif w == "'" and fs:
             fs = False
-            lv and l.append(lv)
+            l.append(lv)
             lv = ''
             continue
         elif w == ' ' and not fs:
