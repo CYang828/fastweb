@@ -13,6 +13,7 @@ class cache(object):
         self._storage_obj = None
         self._expire = expire
         self._key = key
+        self._rkey = None
 
     def __call__(self, func):
         @coroutine
@@ -21,7 +22,7 @@ class cache(object):
             key = self._key.format(*args)
             storage = getattr(cls, self._storage)
             self._storage_obj = storage
-            self._key = key
+            self._rkey = key
             if isinstance(self._storage_obj, AsynRedis):
                 info = yield AsynCache.read(cls, self._storage_obj, key, func, args, self)
                 return info
@@ -32,10 +33,10 @@ class cache(object):
     @coroutine
     def update(self, data):
         if isinstance(self._storage_obj, AsynRedis):
-            info = yield AsynCache.update(self._storage_obj, self._key, data)
+            info = yield AsynCache.update(self._storage_obj, self._rkey, data)
             return info
         elif isinstance(self._storage_obj, SyncRedis):
-            SyncCache.update(self._storage_obj, self._key, data)
+            SyncCache.update(self._storage_obj, self._rkey, data)
 
 
 class AsynCache(cache):
