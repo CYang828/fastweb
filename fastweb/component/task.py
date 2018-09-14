@@ -118,7 +118,7 @@ class SyncTask(Task):
         with timing('ms', 10) as t:
             self.recorder('INFO', 'synchronize call {task} start'.format(task=self))
             # 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
-            result = self.apply_async(task_id=self.requestid,
+            result = self.apply_async(task_id=self.requestid, timeout=self.timeout,
                                       queue=self.queue,
                                       exchange=self.exchange,
                                       routing_key=self.routing_key,
