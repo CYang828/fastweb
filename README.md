@@ -32,7 +32,7 @@ It is a charming web-server framework based on the effective technique and organ
 ## Features
 
 <p align="center">
-  <img width="320" src="/assets/features/features.png">
+  <img width="600" src="/assets/features/features.png">
 </p>
 
 - [web](web.md)
