@@ -11,3 +11,4 @@ fastweb.egg-info/
 docs/_build
 .cache
 *.bak
+clean

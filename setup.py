@@ -43,7 +43,7 @@ setup(
             'fast = fastweb.command.fast:main'
         ],
     },
-    author='Bslience',
-    description="FastWeb is a Python fast-building web frame refered by Tornado, Celery, Thrift",
+    author='bslience',
+    description="FastWeb is a web-server integration solution.",
     **kwargs
 )

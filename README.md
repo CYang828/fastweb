@@ -37,5 +37,6 @@ Many useful examples arg [here](https://github.com/BSlience/fastweb/examples).
 Detail changes for each releases are documentd in the [release notes](https://github.com/BSlience/fastweb/CHANGELOG.md).
 
 ## License
-[Apache License](release notes](https://github.com/BSlience/fastweb/LICENSE.md)
+[Apache License](https://github.com/BSlience/fastweb/LICENSE.md)
+
 Copyright on (c) 2018-present bslience
