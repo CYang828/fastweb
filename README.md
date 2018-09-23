@@ -15,7 +15,7 @@
     <a href="https://github.com/BSlience/fastweb">
         <img src="https://travis-ci.org/BSlience/fastweb.svg?branch=master" alt="fastweb">
     </a>
-    <a href="/LICENSE.md">
+    <a href="LICENSE">
         <img src="https://img.shields.io/badge/Apache%202-license-blue.svg" alt="license">
     </a>
 
