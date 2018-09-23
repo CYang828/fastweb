@@ -1,8 +1,4 @@
 <p align="center">
-  <img width="320" src="/assets/logo/logo.png">
-</p>
-
-<p align="center">
     <a href="https://github.com/BSlience/fastweb">
         <img src="https://travis-ci.org/BSlience/fastweb.svg?branch=master" alt="fastweb">
     </a>
@@ -14,7 +10,7 @@ English | [简体中文](./README.zh-CN.md)
 
 [fastweb](https://github.com/BSlience/fastweb) is a web-server integration solution. It based on [tornado](https://github.com/tornadoweb/tornado), [celery](https://github.com/celery/celery), [thrift](https://github.com/apache/thrift).
 
-It is a charming web-server framework based on the effective technique and organized into component. The components could be used with only several config and code. It is always so easy to make a new component.It also provides many scenes to construct your apis, pages, rpc functions, tasks and so on efficiently.
+It is a charming web-server framework based on the effective technique and organized into component. These components could be used with only several config and code. It is always so easy to make a new component.It also provides many scenes to construct your apis, pages, rpc functions, tasks and so on efficiently.
 
 ## Features
 

@@ -9,7 +9,7 @@ install_requires = []
 version = '1.6.0.7'
 
 if sys.version_info < (3, 0):
-    with open('README.rst') as f:
+    with open('README.md') as f:
         kwargs['long_description'] = f.read()
 
     with open('requirements.txt') as f:
