@@ -3,9 +3,22 @@
 </p>
 
 <p align="center">
+    <a href="https://github.com/tornadoweb/tornado">
+        <img src="https://img.shields.io/badge/tornado-5.0.2-brightgreen.svg" alt="tornado">
+    </a>
+    <a href="https://github.com/celery/celery">
+        <img src="https://img.shields.io/badge/celery-4.2.0-brightgreen.svg" alt="celery">
+    </a>
+    <a href="https://github.com/apache/thrift">
+        <img src="https://img.shields.io/badge/thrifit-0.11.0-brightgreen.svg" alt="thrift">
+    </a>
     <a href="https://github.com/BSlience/fastweb">
         <img src="https://travis-ci.org/BSlience/fastweb.svg?branch=master" alt="fastweb">
     </a>
+    <a href="/LICENSE.md">
+        <img src="https://img.shields.io/badge/Apache%202-license-blue.svg" alt="license">
+    </a>
+
 </p>
 
 English | [简体中文](./README.zh-CN.md)
