@@ -31,6 +31,10 @@ load component + filter
 ♦ tox集成测试
 
 
+cache装饰器增加超时时间
+增加废弃借口装饰器，平滑多度
+
+
 
 
 
