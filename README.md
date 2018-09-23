@@ -31,13 +31,17 @@ It is a charming web-server framework based on the effective technique and organ
 
 ## Features
 
-- [components](components.md)
-
 - [web](web.md)
 
 - [task](docs/task.md)
 
 - [rpc](docs/rpc.md)
+
+- [manager](docs/manager.md)
+
+- [components](docs/components.md)
+
+- [configuration](docs/configuration.md)
 
 ## Getting Started
 
