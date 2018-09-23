@@ -47,7 +47,7 @@ pip install fastweb
 
 ## Examples
 
-Many useful examples are [here](https://github.com/BSlience/fastweb/examples).
+Many useful examples are [here](examples/).
 
 ## Changelog
 
