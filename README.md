@@ -31,13 +31,13 @@ It is a charming web-server framework based on the effective technique and organ
 
 ## Features
 
-- [components](https://github.com/BSlience/fastweb/docs/components.md)
+- [components](components.md)
 
-- [web](https://github.com/BSlience/fastweb/docs/web.md)
+- [web](web.md)
 
-- [task](https://github.com/BSlience/fastweb/docs/task.md)
+- [task](docs/task.md)
 
-- [rpc](https://github.com/BSlience/fastweb/docs/rpc.md)
+- [rpc](docs/rpc.md)
 
 ## Getting Started
 
@@ -51,9 +51,10 @@ Many useful examples are [here](examples/).
 
 ## Changelog
 
-Detail changes for each releases are documentd in the [release notes](https://github.com/BSlience/fastweb/CHANGELOG.md).
+Detail changes for each releases are documentd in the [release notes](CHANGELOG.md).
 
 ## License
-[Apache License](https://github.com/BSlience/fastweb/LICENSE.md)
+
+[Apache License](LICENSE.md)
 
 Copyright on (c) 2018-present bslience
