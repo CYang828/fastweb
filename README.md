@@ -27,6 +27,10 @@ English | [简体中文](./README.zh-CN.md)
 
 [fastweb](https://github.com/BSlience/fastweb) is a web-server integration solution. It based on [tornado](https://github.com/tornadoweb/tornado), [celery](https://github.com/celery/celery), [thrift](https://github.com/apache/thrift).
 
+- [Documentation]()
+
+- [Examples](examples/)
+
 It is a charming web-server framework based on the effective technique and organized into component. The components could be used with only several config and code. It is always so easy to make a new component.It also provides many scenes to construct your apis, pages, rpc functions, tasks and so on efficiently.
 
 ## Features
@@ -35,17 +39,32 @@ It is a charming web-server framework based on the effective technique and organ
   <img width="600" src="/assets/features/features.png">
 </p>
 
-- [web](web.md)
+```
+    - Configuration
+        - ini
 
-- [task](docs/task.md)
+    - Web
+        - api
+        - page render
 
-- [rpc](docs/rpc.md)
+    - Task
+        - distributed task
+        - periodic task
+        - touting task
 
-- [manager](docs/manager.md)
+    - Rpc
+        - thrift
 
-- [components](docs/components.md)
+    - Component
+        - mysql
+        - redis
+        - mongo
+        - http
+        - soap
 
-- [configuration](docs/configuration.md)
+    - Manager
+        - pool
+```
 
 ## Getting Started
 
@@ -59,7 +78,7 @@ Many useful examples are [here](examples/).
 
 ## Changelog
 
-Detail changes for each releases are documentd in the [release notes](CHANGELOG.md).
+Detail changes for each releases are documented in the [release notes](CHANGELOG.md).
 
 ## License
 

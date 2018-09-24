@@ -12,7 +12,7 @@ from .accesspoint import ioloop
 import fastweb.manager
 from fastweb.util.tool import timing
 from fastweb.accesspoint import AsyncHTTPClient
-from fastweb.util.configuration import Configuration
+from fastweb.util.configuration import ConfigurationParser
 from fastweb.util.log import setup_logging, getLogger, recorder, check_logging_level, set_record_color
 
 
@@ -98,7 +98,7 @@ class Loader(object):
           - `setting`: 该格式需要的设置参数
         """
 
-        self.configer = Configuration(backend, **setting)
+        self.configer = ConfigurationParser(backend, **setting)
         self.configs = self.configer.configs
 
         recorder('INFO', 'load configuration\nbackend:\t{backend}\nsetting:\t{setting}\nconfiguration:\t{config}'.format(backend=backend,
@@ -117,7 +117,7 @@ class Loader(object):
         """
 
         layout = layout.lower()
-        configer = Configuration(backend, **setting)
+        configer = ConfigurationParser(backend, **setting)
 
         # 加载需要管理连接池的组件
         recorder('INFO', 'load connection component start')

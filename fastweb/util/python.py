@@ -1,8 +1,7 @@
 # coding:utf8
 
-"""python特性"""
+"""python util"""
 
-import os
 import six
 import json
 import hashlib
@@ -13,7 +12,8 @@ import fastweb
 from fastweb.accesspoint import coroutine, Return
 
 
-head = lambda o, h: '{head}{ori}'.format(head=h, ori=o)
+def head(o, h):
+    return '{head}{ori}'.format(head=h, ori=o)
 
 
 def write_file(filepath, content, pattern='a+'):
@@ -256,6 +256,32 @@ def sequence2list(s):
         lv += w
     return l
 
+
+def str2everything(s):
+    """convert str to the most possibility type
+
+    support type:
+        int
+        float
+        boolean: yes, no
+        str,
+        list
+    """
+
+    try:
+        # int, float
+        s = eval(s)
+        return s
+    except NameError:
+        # boolean, str, list
+        if s.lower() == 'yes':
+            return True
+        elif s.lower() == 'no':
+            return False
+        elif s.split(',') > 0:
+            return [i for i in s.split(',') if i]
+        else:
+            return utf8(s)
 
 
 
