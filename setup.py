@@ -17,7 +17,7 @@ if sys.version_info < (3, 0):
             install_requires.append(require[:-1])
     install_requires.append('subprocess32')
 elif sys.version_info > (3, 0):
-    with open('README.rst', encoding='utf-8') as f:
+    with open('README.md', encoding='utf-8') as f:
         kwargs['long_description'] = f.read()
 
     with open('requirements.txt', encoding='utf-8') as f:

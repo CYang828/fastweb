@@ -109,7 +109,7 @@ class Component(object):
         def _add_attr(att, va):
             """增加成员属性"""
 
-            if hasattr(self, att):
+            if attr in self.eattr:
                 if va:
                     setattr(self, att, va)
             else:

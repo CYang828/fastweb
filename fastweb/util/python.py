@@ -278,10 +278,12 @@ def str2everything(s):
             return True
         elif s.lower() == 'no':
             return False
-        elif s.split(',') > 0:
+        elif len(s.split(',')) > 1:
             return [i for i in s.split(',') if i]
         else:
             return utf8(s)
+    except SyntaxError:
+        return utf8(s)
 
 
 

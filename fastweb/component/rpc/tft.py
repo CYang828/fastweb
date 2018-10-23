@@ -145,7 +145,7 @@ class AsynTftRpc(TftRpc):
 
     def __getattr__(self, name):
         """获取远程调用方法"""
-        self._client._seqid = int(self.owner.requestid) if self.owner else 0
+        # self._client._seqid = int(self.owner.requestid) if self.owner else 0
         exception_processor = ExceptionProcessor(AttributeError, self._connect)
 
         if hasattr(self._client, name):
