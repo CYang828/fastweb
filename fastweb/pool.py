@@ -77,6 +77,10 @@ class SyncConnectionPool(ConnectionPool):
     """支持多线程，不支持多进程
        多进程需要为每个进程单独创建自己的连接池"""
 
+    def __init__(self, cls, setting, size, name, awake, maxconnections):
+        super(AsynConnectionPool, self).__init__(cls, setting, size, name,
+                                                 awake=awake, maxconnections=maxconnections)
+
     def __str__(self):
         return '<{name}|SyncConnectionPool>'.format(name=self._name)
 
@@ -148,6 +152,10 @@ class SyncConnectionPool(ConnectionPool):
 
 class AsynConnectionPool(ConnectionPool):
     """tornado使用，不支持多线程，不支持多进程"""
+
+    def __init__(self, cls, setting, size, name, awake, maxconnections):
+        super(AsynConnectionPool, self).__init__(cls, setting, size, name,
+                                                 awake=awake, maxconnections=maxconnections)
 
     def __str__(self):
         return '<{name}|AsynConnectionPool>'.format(name=self._name)
