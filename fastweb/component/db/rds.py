@@ -21,7 +21,8 @@ DEFAULT_CHARSET = 'utf8'
 
 
 class Redis(Component):
-    """Redis基类"""
+    """Redis基类
+    TODO: 增加序列化json的功能"""
 
     eattr = {'host': str}
     oattr = {'port': int, 'password': str, 'db': int, 'timeout': int, 'charset': str}

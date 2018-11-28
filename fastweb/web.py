@@ -123,11 +123,10 @@ class Api(web.RequestHandler, AsynComponents):
         # TODO: 远程ip获取不准确
         self.recorder(
             'IMPORTANT',
-            'Api request\nIp:<{ip}>\nHost:<{host}{uri}\nArguments:<{arguments}>\nUserAgent:<{ua}>'.format(
+            'Api request\nIp:<{ip}>\nHost:<{host}{uri}\nUserAgent:<{ua}>'.format(
                 ip=self.remoteip,
                 host=self.host,
                 uri=self.uri,
-                arguments=self.request.body,
                 ua=self.request.headers.get('User-Agent', 'Fastweb')))
         self.set_header_json()
 
@@ -200,11 +199,10 @@ class Page(web.RequestHandler, AsynComponents):
 
         self.recorder(
             'IMPORTANT',
-            'Page request\nIp:<{ip}>\nHost:<{host}{uri}\nArguments:<{arguments}>\nUserAgent:<{ua}>'.format(
+            'Page request\nIp:<{ip}>\nHost:<{host}{uri}\nUserAgent:<{ua}>'.format(
                 ip=self.remoteip,
                 host=self.host,
                 uri=self.uri,
-                arguments=self.request.body,
                 ua=self.request.headers['User-Agent']))
 
     def data_received(self, chunk):
