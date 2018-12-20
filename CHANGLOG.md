@@ -1,3 +1,7 @@
+Version:1.6.0.13
+    fix: 修复soap调用超时失效
+    fix: 修复同一个request/task中调用其他多个task导致的任务丢失问题
+
 Version:1.6.0.5
     fix: 修改redis返回值解析错误
 
