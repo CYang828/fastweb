@@ -207,7 +207,7 @@ class SyncComponents(Components):
 
         with timing('ms', 10) as t:
             try:
-                transport = Transport(request.timeout)
+                transport = Transport(operation_timeout=request.timeout)
                 client = CachingClient(wsdl=request.wsdl, wsse=request.wsse, transport=transport)
                 response = getattr(client.service, request.function)(**request.kwargs)
             except Error as e:

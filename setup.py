@@ -1,8 +1,9 @@
-# coding:utf-8
+# coding=utf-8
 
 
 import sys
 from setuptools import setup, find_packages
+
 
 kwargs = {}
 install_requires = []
@@ -34,9 +35,9 @@ kwargs['install_requires'] = install_requires
 setup(
     name='fastweb',
     version=version,
+    include_package_data=True,
     packages=find_packages(),
     package_data={'fastweb': ['setting/default_logging.yaml']},
-    scripts=['requirements.txt', 'README.md'],
     entry_points={
         'console_scripts': [
             'fasthrift = fastweb.command.service.thrift:gen_thrift_auxiliary',

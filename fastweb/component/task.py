@@ -98,7 +98,7 @@ class SyncTask(Task):
 
     def call_async(self, *args, **kwargs):
         """异步调用"""
-        self.requestid = self.owner.requestid if self.owner else None
+        self.requestid = self.owner.requestid + '-' + self.name if self.owner else None
         with timing('ms', 10) as t:
             self.recorder('INFO', 'asynchronous call {obj} start'.format(obj=self))
             # 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
@@ -114,7 +114,7 @@ class SyncTask(Task):
     def call(self, *args, **kwargs):
         """同步调用"""
         # TODO:多个同步任务的链式调用
-        self.requestid = self.owner.requestid if self.owner else None
+        self.requestid = self.owner.requestid + '-' + self.name if self.owner else None
         with timing('ms', 10) as t:
             self.recorder('INFO', 'synchronize call {task} start'.format(task=self))
             # 调用task层时，调用方的requestid会成为本次任务的taskid， 任务的requesid也为透传id
@@ -149,7 +149,7 @@ class AsynTask(Task):
     @coroutine
     def call_async(self, *args, **kwargs):
         """异步调用"""
-        self.requestid = self.owner.requestid if self.owner else None
+        self.requestid = self.owner.requestid + '-' + self.name if self.owner else None
         with timing('ms', 10) as t:
             self.recorder('INFO', 'asynchronous call {obj} start\nArgument: {args} {kwargs}'.format(obj=self,
                                                                                                     args=args,
@@ -168,7 +168,7 @@ class AsynTask(Task):
     @coroutine
     def call(self, *args, **kwargs):
         """同步调用"""
-        self.requestid = self.owner.requestid if self.owner else None
+        self.requestid = self.owner.requestid + '-' + self.name if self.owner else None
         # TODO:多个同步任务的链式调用
         with timing('ms', 10) as t:
             self.recorder('INFO', 'synchronize call {obj} start\nArgument: {args} {kwargs}'.format(obj=self,
