@@ -270,8 +270,11 @@ def str2everything(s):
 
     try:
         # int, float
-        s = eval(s)
-        return s
+        c = eval(s)
+        if isinstance(c, (int, float)):
+            return c
+        else:
+            return utf8(s)
     except NameError:
         # boolean, str, list
         if s.lower() == 'yes':
@@ -282,7 +285,7 @@ def str2everything(s):
             return [i for i in s.split(',') if i]
         else:
             return utf8(s)
-    except SyntaxError:
+    except (SyntaxError, TypeError):
         return utf8(s)
 
 

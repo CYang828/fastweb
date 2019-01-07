@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 install_requires = []
-version = '1.6.0.13'
+version = '1.6.0.14'
 
 if sys.version_info < (3, 0):
     with open('README.md') as f:
