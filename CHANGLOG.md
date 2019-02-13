@@ -1,3 +1,6 @@
+Version:1.6.0.15
+    add: 任务增加忽略结果配置
+
 Version:1.6.0.13
     fix: 修复soap调用超时失效
     fix: 修复同一个request/task中调用其他多个task导致的任务丢失问题

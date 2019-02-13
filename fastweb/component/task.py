@@ -33,7 +33,8 @@ class Task(Component, CeleryTask):
 
     eattr = {'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
     oattr = {'name': str, 'timeout': int, 'exchange_type': str, 'minute': str, 'hour': str,
-             'day_of_week': str, 'day_of_month': str, 'month_of_year': str, 'concurrency': int}
+             'day_of_week': str, 'day_of_month': str, 'month_of_year': str, 'concurrency': int,
+             'ignore_result': bool}
 
     def __init__(self, setting):
         """初始化任务"""
@@ -48,6 +49,7 @@ class Task(Component, CeleryTask):
         rate_limit = self.setting.get('rate_limit', None)
         acks_late = self.setting.get('acks_late', None)
         self.requestid = None
+
         # 设置跟踪任务启动状态，为了让异步访问时可以准确知道任务被执行了
         self.track_started = True
 
@@ -57,6 +59,9 @@ class Task(Component, CeleryTask):
         day_of_week = setting.get('day_of_week', '*')
         day_of_month = setting.get('day_of_month', '*')
         month_of_year = setting.get('month_of_year', '*')
+
+        # 设置任务结果状态
+        ignore_result = setting.get('ignore_result', False)
 
         # 设置绑定的application的属性
         app = Celery(main=self.name, loader=TaskLoader, broker=self.broker, backend=self.backend)
@@ -76,13 +81,16 @@ class Task(Component, CeleryTask):
         self.recorder('DEBUG', 'setup crontab {cron}'.format(cron=beat_schedule))
 
         # 设置任务的路由
-        queue = RMQueue(name=self.queue, exchange=Exchange(name=self.exchange, type=self.exchange_type), routing_key=self.routing_key)
+        queue = RMQueue(name=self.queue, exchange=Exchange(name=self.exchange,
+                                                           type=self.exchange_type),
+                        routing_key=self.routing_key)
         app.conf.update(task_queues=(queue,),
                         task_routes={self.name: {'queue': self.queue, 'routing_key': self.routing_key}},
                         task_annotations={self.name: {'rate_limit': rate_limit}},
                         task_acks_late=acks_late,
                         beat_schedule=beat_schedule,
-                        worker_concurrency=setting.get('concurrency', 1))
+                        worker_concurrency=setting.get('concurrency', 1),
+                        task_ignore_result=ignore_result)
 
         # task和application绑定
         self.application = app
