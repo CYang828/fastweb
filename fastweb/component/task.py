@@ -33,8 +33,7 @@ class Task(Component, CeleryTask):
 
     eattr = {'broker': str, 'queue': str, 'exchange': str, 'routing_key': str, 'backend': str}
     oattr = {'name': str, 'timeout': int, 'exchange_type': str, 'minute': str, 'hour': str,
-             'day_of_week': str, 'day_of_month': str, 'month_of_year': str, 'concurrency': int,
-             'ignore_result': bool}
+             'day_of_week': str, 'day_of_month': str, 'month_of_year': str, 'concurrency': int}
 
     def __init__(self, setting):
         """初始化任务"""
@@ -60,9 +59,6 @@ class Task(Component, CeleryTask):
         day_of_month = setting.get('day_of_month', '*')
         month_of_year = setting.get('month_of_year', '*')
 
-        # 设置任务结果状态
-        ignore_result = setting.get('ignore_result', False)
-
         # 设置绑定的application的属性
         app = Celery(main=self.name, loader=TaskLoader, broker=self.broker, backend=self.backend)
         app.tasks.register(self)
@@ -75,7 +71,8 @@ class Task(Component, CeleryTask):
                                 'timer_schedule':
                                 {
                                     'task': self.name,
-                                    'schedule': crontab(hour=hour, minute=minute, day_of_week=day_of_week, day_of_month=day_of_month, month_of_year=month_of_year),
+                                    'schedule': crontab(hour=hour, minute=minute, day_of_week=day_of_week,
+                                                        day_of_month=day_of_month, month_of_year=month_of_year),
                                 },
                               }
         self.recorder('DEBUG', 'setup crontab {cron}'.format(cron=beat_schedule))
@@ -89,8 +86,7 @@ class Task(Component, CeleryTask):
                         task_annotations={self.name: {'rate_limit': rate_limit}},
                         task_acks_late=acks_late,
                         beat_schedule=beat_schedule,
-                        worker_concurrency=setting.get('concurrency', 1),
-                        task_ignore_result=ignore_result)
+                        worker_concurrency=setting.get('concurrency', 1))
 
         # task和application绑定
         self.application = app

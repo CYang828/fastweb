@@ -1,5 +1,4 @@
-Version:1.6.0.15
-    add: 任务增加忽略结果配置
+
 
 Version:1.6.0.13
     fix: 修复soap调用超时失效
