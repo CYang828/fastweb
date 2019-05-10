@@ -62,10 +62,14 @@ class Components(object):
                 raise ComponentError
 
             self._components[name] = component
-            self.recorder('DEBUG', '{obj} get component from manager {name} {com}'.format(obj=self, name=name, com=component))
+            self.recorder('DEBUG', '{obj} get component from manager {name} {com}'.format(obj=self,
+                                                                                          name=name,
+                                                                                          com=component))
             return component
         else:
-            self.recorder('DEBUG', '{obj} get component from components cache {name} {com}'.format(obj=self, name=name, com=component))
+            self.recorder('DEBUG', '{obj} get component from components cache {name} {com}'.format(obj=self,
+                                                                                                   name=name,
+                                                                                                   com=component))
             return component
 
     @staticmethod

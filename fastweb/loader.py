@@ -16,7 +16,7 @@ from fastweb.util.configuration import ConfigurationParser
 from fastweb.util.log import setup_logging, getLogger, recorder, check_logging_level, set_record_color
 
 
-__all__ = ['app', 'SyncPattern', 'AsynPattern']
+__all__ = ['app']
 DEFAULT_APP_LOG_PATH = 'fastweb@application.log'
 DEFAULT_SYS_LOG_PATH = 'fastweb@system.log'
 
@@ -44,8 +44,8 @@ class Loader(object):
         # 增加最大数据量
         AsyncHTTPClient.configure(None, max_body_size=1000000000)
 
-    def load_recorder(self, application_log_path=DEFAULT_APP_LOG_PATH, system_log_path=DEFAULT_SYS_LOG_PATH, logging_setting=None,
-                      application_level='DEBUG', system_level='DEBUG', logging_colormap=None):
+    def load_recorder(self, application_log_path=DEFAULT_APP_LOG_PATH, system_log_path=DEFAULT_SYS_LOG_PATH,
+                      logging_setting=None, application_level='DEBUG', system_level='DEBUG', logging_colormap=None):
         """加载日志对象
 
         需要最先加载,因为其他加载都需要使用recorder
@@ -54,7 +54,8 @@ class Loader(object):
         :parameter:
           - `application_log_path`: 应用日志路径
           - `system_log_path`: 系统日志路径,默认系统日志路径和应用日志路径相同
-          - `logging_setting_path`: 默认从fastweb.settting.default_logging.yaml获取配置,可以指定为自定义的日志配置,必须有application_recorder和system_recorder
+          - `logging_setting_path`: 默认从fastweb.settting.default_logging.yaml获取配置,
+                                    可以指定为自定义的日志配置,必须有application_recorder和system_recorder
           - `logging_setting`: 自定以logging配置
           - `application_level`: 应用日志输出级别
           - `system_level`: 系统日志输出级别
@@ -86,9 +87,13 @@ class Loader(object):
 
         self.bRecorder = True
         recorder('INFO',
-                 'load recorder configuration\n{conf}\n\napplication log: {app_path} [{app_level}]\nsystem log: {sys_path} [{sys_level}]'.format(
-                  conf=json.dumps(logging_setting, indent=4), app_path=application_log_path,
-                  app_level=application_level, sys_path=system_log_path, sys_level=system_level))
+                 'load recorder configuration\n{conf}\n\n'
+                 'application log: {app_path} [{app_level}]\n'
+                 'system log: {sys_path} [{sys_level}]'.format(conf=json.dumps(logging_setting, indent=4),
+                                                               app_path=application_log_path,
+                                                               app_level=application_level,
+                                                               sys_path=system_log_path,
+                                                               sys_level=system_level))
 
     def load_configuration(self, backend='ini', **setting):
         """加载配置文件
@@ -101,9 +106,10 @@ class Loader(object):
         self.configer = ConfigurationParser(backend, **setting)
         self.configs = self.configer.configs
 
-        recorder('INFO', 'load configuration\nbackend:\t{backend}\nsetting:\t{setting}\nconfiguration:\t{config}'.format(backend=backend,
-                                                                                                                         setting=setting,
-                                                                                                                         config=self.configs))
+        recorder('INFO', 'load configuration\nbackend:\t{backend}\n'
+                         'setting:\t{setting}\nconfiguration:\t{config}'.format(backend=backend,
+                                                                                setting=setting,
+                                                                                config=self.configs))
 
     def load_component(self, layout, backend='ini', **setting):
         """加载组件管理器

@@ -97,6 +97,7 @@ def check_logging_level(level):
       - `level`:日志级别"""
 
     if level not in LOGGING_LEVEL:
-        recorder('CRITICAL', 'please check logging level! right options {levels}, current level is {level}'.format(level=level,
-                                                                                                                   levels=str(LOGGING_LEVEL)))
+        recorder('CRITICAL', 'please check logging level! right options {levels},'
+                             ' current level is {level}'.format(level=level,
+                                                                levels=str(LOGGING_LEVEL)))
         raise ParameterError

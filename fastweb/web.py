@@ -33,7 +33,11 @@ class AsynComponents(fastweb.components.Components):
     def http_request(self, request, timeout=None):
         http_retry_policy = RetryPolicy(times=request.retry, error=HttpError)
         request.request_timeout = timeout
-        response = yield Retry(self, '{obj}'.format(obj=self), self._http_request, http_retry_policy, request).run_asyn()
+        response = yield Retry(self,
+                               '{obj}'.format(obj=self),
+                               self._http_request,
+                               http_retry_policy,
+                               request).run_asyn()
         raise Return(response)
 
     @coroutine
@@ -118,7 +122,9 @@ class Api(web.RequestHandler, AsynComponents):
         self.host = request.host
         self.remoteip = request.remote_ip
         self.arguments = self.request.arguments
-        self.requestid = self.get_argument('requestid') if self.get_argument('requestid', None) else self.gen_requestid()
+        self.requestid = self.get_argument('requestid') \
+            if self.get_argument('requestid', None) \
+            else self.gen_requestid()
 
         # TODO: 远程ip获取不准确
         self.recorder(
@@ -195,7 +201,9 @@ class Page(web.RequestHandler, AsynComponents):
         self.host = request.host
         self.remoteip = request.remote_ip
         self.arguments = self.request.arguments
-        self.requestid = self.get_argument('requestid') if self.get_argument('requestid', None) else self.gen_requestid()
+        self.requestid = self.get_argument('requestid') \
+            if self.get_argument('requestid', None) \
+            else self.gen_requestid()
 
         self.recorder(
             'IMPORTANT',
