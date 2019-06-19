@@ -46,5 +46,6 @@ setup(
     },
     author='bslience',
     description="FastWeb is a web-server integration solution.",
+    long_description_content_type="markdown",
     **kwargs
 )
