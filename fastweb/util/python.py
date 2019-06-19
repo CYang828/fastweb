@@ -289,10 +289,3 @@ def str2everything(s):
         return utf8(s)
 
 
-
-
-
-
-
-
-

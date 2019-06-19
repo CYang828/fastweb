@@ -214,8 +214,9 @@ class SyncComponents(Components):
                 transport = Transport(operation_timeout=request.timeout)
                 client = CachingClient(wsdl=request.wsdl, wsse=request.wsse, transport=transport)
                 response = getattr(client.service, request.function)(**request.kwargs)
-            except Error as e:
-                _recorder('ERROR', 'soap request error ({e})'.format(e=e))
+            except Exception as e:
+                # wried error, hold all exception
+                _recorder('ERROR', 'soap request error ({e}))'.format(e=e))
                 raise retry
 
         _recorder('INFO', 'soap request successful\n{response} -- {time}'.format(response=response, time=t))
