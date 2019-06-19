@@ -45,7 +45,7 @@ setup(
         ],
     },
     author='bslience',
-    description="[fastweb](https://github.com/BSlience/fastweb) is a web-server integration solution. It based on [tornado](https://github.com/tornadoweb/tornado), [celery](https://github.com/celery/celery), [thrift](https://github.com/apache/thrift).",
-    long_description_content_type="markdown",
+    description="fastweb is a web-server integration solution. It based on tornado, celery, thrift.",
+    long_description_content_type="text/markdown",
     **kwargs
 )
