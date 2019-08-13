@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 kwargs = {}
 install_requires = []
-version = '1.6.0.17'
+version = '1.6.0.18'
 
 if sys.version_info < (3, 0):
     with open('README.md') as f:
@@ -45,6 +45,7 @@ setup(
         ],
     },
     author='bslience',
+    author_email='zhangchunyang_pri@126.com',
     description="fastweb is a web-server integration solution. It based on tornado, celery, thrift.",
     url="https://github.com/BSlience/fastweb",
     long_description_content_type="text/markdown",

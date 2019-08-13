@@ -425,6 +425,7 @@ class AsynMysql(Mysql):
 
         effect = self._cur.rowcount
         yield self._cur.close()
+        self._cur = None
         raise Return(effect)
 
     @coroutine
