@@ -399,7 +399,6 @@ class AsynMysql(Mysql):
 
         try:
             self._format_sql(sql, args)
-
             self.recorder('INFO', '{obj} query start ({threadid})\n{sql}'.format(obj=self,
                           threadid=self._conn.server_thread_id[0], sql=sql))
             with tool.timing('ms', 10) as t:
@@ -424,8 +423,8 @@ class AsynMysql(Mysql):
             yield self.commit()
 
         effect = self._cur.rowcount
-        yield self._cur.close()
-        self._cur = None
+        if not self._event:
+            yield self._cur.close()
         raise Return(effect)
 
     @coroutine
