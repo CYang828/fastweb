@@ -17,4 +17,4 @@ kombu==4.2.1
 zeep==3.0.0
 tornadis==0.8.1
 motor==1.2.2
-flower==0.9.2
+flower==1.2.0
