@@ -1,5 +1,5 @@
 six
-tornado==5.0.2
+tornado==6.3.2
 celery==5.2.2
 thrift==0.11.0
 requests>=2.20.0
